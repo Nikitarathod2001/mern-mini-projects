@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import React from 'react'
+import AppRoute from "./routes/AppRoute";
 
 const App = () => {
 
@@ -9,7 +10,11 @@ const App = () => {
   const handleCheckout = async () => {
     try {
 
-      const res = await axios.post("http://localhost:5000/create-checkout-session");
+      const res = await axios.post("http://localhost:5000/create-checkout-session", {
+        id: product.id,
+        name: product.name,
+        price: product.price
+      });
 
       window.location.href = res.data.url;
       
@@ -43,6 +48,11 @@ const App = () => {
   }
 
   return (
+
+    <>
+    
+    <AppRoute/>
+
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
 
       <div className="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-xl transition hover:shadow-2xl">
@@ -77,6 +87,8 @@ const App = () => {
       </div>
       
     </div>
+
+    </>
   )
 }
 

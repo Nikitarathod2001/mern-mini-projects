@@ -29,6 +29,8 @@ app.get("/api/product", (req, res) => {
 app.post("/create-checkout-session", async (req, res) => {
   try {
 
+    const {id, name, price} = req.body;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
 
@@ -37,13 +39,17 @@ app.post("/create-checkout-session", async (req, res) => {
           price_data: {
             currency: "inr",
             product_data: {
-              name: "Wireless Headphones",
+              name,
             },
-            unit_amount: 99900,
+            unit_amount: price * 100,
           },
           quantity: 1,
         }
       ],
+
+      metadata: {
+        productId: id,
+      },
 
       mode: "payment",
 
