@@ -3,15 +3,18 @@ import cors from "cors";
 import "dotenv/config";
 
 import stripe from "./config/stripe.js";
+import Order from "./models/Order.js";
+import connectDB from "./config/db.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+connectDB();
 
 app.use(cors());
 
 app.post("/webhook", 
   express.raw({type: "application/json"}),
-  (req, res) => {
+  async (req, res) => {
 
     const sig = req.headers["stripe-signature"];
 
@@ -32,6 +35,12 @@ app.post("/webhook",
 
     switch(event.type) {
       case "checkout.session.completed": 
+        const session = event.data.object;
+
+        const orderId = session.metadata.orderId;
+
+        await Order.findByIdAndUpdate(orderId, {paymentStatus: "Paid"});
+
         console.log("Payment Successful");
         break;
 
@@ -64,10 +73,17 @@ app.get("/api/product", (req, res) => {
   res.json(product);
 });
 
+
 app.post("/create-checkout-session", async (req, res) => {
   try {
 
     const {id, name, price} = req.body;
+
+    const order = await Order.create({
+      productId: id,
+      productName: name,
+      amount: price,
+    });
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -86,7 +102,7 @@ app.post("/create-checkout-session", async (req, res) => {
       ],
 
       metadata: {
-        productId: id,
+        orderId: order._id.toString(),
       },
 
       mode: "payment",
