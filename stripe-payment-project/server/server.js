@@ -8,6 +8,44 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
+
+app.post("/webhook", 
+  express.raw({type: "application/json"}),
+  (req, res) => {
+
+    const sig = req.headers["stripe-signature"];
+
+    let event;
+
+    try {
+
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+      
+    } catch (error) {
+      console.log(error.message);
+      return res.sendStatus(400);
+    }
+
+    switch(event.type) {
+      case "checkout.session.completed": 
+        console.log("Payment Successful");
+        break;
+
+      default:
+        console.log(`Unhandled event: ${event.type}`);
+    }
+
+    res.json({
+      received: true,
+    });
+
+  }
+);
+
 app.use(express.json());
 
 const product = {
