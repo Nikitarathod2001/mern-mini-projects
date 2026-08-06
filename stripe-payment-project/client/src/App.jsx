@@ -6,6 +6,18 @@ const App = () => {
 
   const [product, setProduct] = useState(null);
 
+  const handleCheckout = async () => {
+    try {
+
+      const res = await axios.post("http://localhost:5000/create-checkout-session");
+
+      window.location.href = res.data.url;
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -53,7 +65,8 @@ const App = () => {
               &#x20B9;{product.price}
             </span>
 
-            <button className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition hover:bg-blue-700 active:scale-95">
+            <button onClick={handleCheckout} 
+              className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition hover:bg-blue-700 active:scale-95">
               Buy Now
             </button>
 
