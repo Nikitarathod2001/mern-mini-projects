@@ -109,7 +109,7 @@ app.post("/create-checkout-session", async (req, res) => {
 
       success_url: "http://localhost:5173/success",
 
-      cancel_url: "http://localhost:5173",
+      cancel_url: "http://localhost:5173/cancel",
     });
 
     res.json({
