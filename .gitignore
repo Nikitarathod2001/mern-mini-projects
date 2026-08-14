@@ -96,4 +96,7 @@ docker-compose.override.yml
 # Miscellaneous
 # =========================
 *.tgz
+
+stripe-payment-project/
+
 ```
