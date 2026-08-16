@@ -78,6 +78,15 @@ const Login = () => {
 
         </form>
 
+        <button type='button'
+          onClick={() => {
+            window.location.href = "http://localhost:5000/api/auth/google";
+          }}
+          className='mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 transition hover:bg-gray-50'
+        >
+          Continue with Google
+        </button>
+
       </div>
       
     </div>

@@ -194,17 +194,23 @@ export const googleCallback = async (req, res) => {
 
     const token = generateToken(user._id, user.role);
 
-    res.json({
-      message: "Google login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        provider: user.provider,
-      },
-    });
+    // res.json({
+    //   message: "Google login successful",
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //     role: user.role,
+    //     provider: user.provider,
+    //   },
+    // });
+
+    const frontendUrl = "http://localhost:5173";
+
+    res.redirect(
+      `${frontendUrl}/oauth-success?token=${token}`
+    );
     
   } catch (error) {
     console.error(
