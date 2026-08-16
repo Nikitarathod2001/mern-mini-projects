@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import {google} from "googleapis";
 import oauth2Client from "../config/google.js";
+import crypto from "crypto";
 
 // --------- Register -------------
 
@@ -132,6 +133,15 @@ export const getAdminDashboard = async (req, res) => {
 // -------- Google Login -----------
 
 export const googleLogin = (req, res) => {
+
+  const state = crypto.randomBytes(32).toString("hex");
+
+  res.cookie("oauth_state", state, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSit: "lax",
+    maxAge: 10 * 60 * 1000,
+  });
   
   const authorizationUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
@@ -140,6 +150,7 @@ export const googleLogin = (req, res) => {
       "email",
       "profile",
     ],
+    state,
     prompt: "consent",
   });
 
@@ -152,13 +163,29 @@ export const googleLogin = (req, res) => {
 export const googleCallback = async (req, res) => {
   try {
 
-    const {code} = req.query;
+    if(req.query.error) {
+      return res.status(400).json({
+        message: "Google authentication was cancelled"
+      });
+    }
+
+    const {code, state} = req.query;
 
     if(!code) {
       return res.status(400).json({
         message: "Authorization code missing",
       });
     }
+
+    const savedState = req.cookies.oauth_state;
+
+    if(!state || !savedState || state !== savedState) {
+      return res.status(400).json({
+        message: "Invalid OAuth state",
+      });
+    }
+
+    res.clearCookie("oauth_state");
 
     const {tokens} = await oauth2Client.getToken(code);
 
@@ -183,6 +210,16 @@ export const googleCallback = async (req, res) => {
     });
 
     if(!user) {
+      const existingUser = await User.findOne({
+        email: data.email,
+      });
+
+      if(existingUser) {
+        return res.status(409).json({
+          message: "An account with this email already exists. Please login using your existing method."
+        });
+      }
+
       user = await User.create({
         name: data.name,
         email: data.email,
@@ -206,7 +243,7 @@ export const googleCallback = async (req, res) => {
     //   },
     // });
 
-    const frontendUrl = "http://localhost:5173";
+    const frontendUrl = process.env.CLIENT_URL;
 
     res.redirect(
       `${frontendUrl}/oauth-success?token=${token}`
