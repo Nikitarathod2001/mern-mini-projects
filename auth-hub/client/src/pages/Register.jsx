@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 const Register = () => {
 
@@ -9,8 +10,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-
-  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -26,7 +25,7 @@ const Register = () => {
 
       const response = await api.post("/auth/register", formData);
 
-      setMessage(response.data.message);
+      toast.success("Registration Successful!");
 
       setFormData({
         name: "",
@@ -35,7 +34,7 @@ const Register = () => {
       });
       
     } catch (error) {
-      setMessage(error.response?.data?.message || "Registration failed");
+      toast.error(error.response?.data?.message || "Registration failed");
     }
   };
 
@@ -59,7 +58,7 @@ const Register = () => {
           />
 
           <input type="email" 
-            name="eamil"
+            name="email"
             placeholder='Enter your email'
             value={formData.email}
             onChange={handleChange}
@@ -81,14 +80,6 @@ const Register = () => {
           </button>
 
         </form>
-
-        {
-          message && (
-            <p className='mt-4 text-center text-sm text-gray-700'>
-              {message}
-            </p>
-          )
-        }
 
       </div>
       

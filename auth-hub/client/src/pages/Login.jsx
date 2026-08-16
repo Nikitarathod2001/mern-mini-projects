@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 const Login = () => {
 
@@ -8,8 +9,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-
-  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -27,10 +26,15 @@ const Login = () => {
 
       localStorage.setItem("token", response.data.token);
 
-      setMessage("Login successful");
+      toast.success("Login Successful!");
+
+      setFormData({
+        email: "",
+        password: "",
+      });
       
     } catch (error) {
-      setMessage(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || "Login failed");
     }
   };
 
@@ -68,14 +72,6 @@ const Login = () => {
           </button>
 
         </form>
-
-        {
-          message && (
-            <p className='mt-4 text-center text-sm text-gray-700'>
-              {message}
-            </p>
-          )
-        }
 
       </div>
       
