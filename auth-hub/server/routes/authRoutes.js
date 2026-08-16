@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, getProfile, getAdminDashboard } from "../controllers/authController.js";
+import { register, login, getProfile, getAdminDashboard, googleCallback, googleLogin } from "../controllers/authController.js";
 import authorUser from "../middleware/authMiddleware.js";
 import authorizeAdmin from "../middleware/authorizeMiddleware.js";
 
@@ -10,5 +10,8 @@ authRouter.post("/login", login);
 
 authRouter.get("/profile", authorUser, getProfile);
 authRouter.get("/admin/dashboard", authorUser, authorizeAdmin("admin"), getAdminDashboard);
+
+authRouter.get("/google", googleLogin);
+authRouter.get("/google/callback", googleCallback);
 
 export default authRouter;

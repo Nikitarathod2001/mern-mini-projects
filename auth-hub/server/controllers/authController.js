@@ -1,6 +1,9 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
+import oauth2Client from "../config/google.js";
+
+// --------- Register -------------
 
 export const register = async (req, res) => {
   try {
@@ -47,6 +50,7 @@ export const register = async (req, res) => {
   }
 };
 
+// ----------- Login -----------
 
 export const login = async (req, res) => {
   try {
@@ -102,6 +106,7 @@ export const login = async (req, res) => {
   }
 };
 
+// ------------ User Profile -----------
 
 export const getProfile = async (req, res) => {
   res.status(200).json({
@@ -109,6 +114,7 @@ export const getProfile = async (req, res) => {
   });
 };
 
+// ----------- Admin Dashboard ----------
 
 export const getAdminDashboard = async (req, res) => {
   res.status(200).json({
@@ -120,4 +126,58 @@ export const getAdminDashboard = async (req, res) => {
       role: req.user.role,
     },
   });
+};
+
+// -------- Google Login -----------
+
+export const googleLogin = (req, res) => {
+  
+  const authorizationUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: [
+      "openid",
+      "email",
+      "profile",
+    ],
+    prompt: "consent",
+  });
+
+  res.redirect(authorizationUrl);
+
+}
+
+// ------- Google Callback --------
+
+export const googleCallback = async (req, res) => {
+  try {
+
+    const {code} = req.query;
+
+    if(!code) {
+      return res.status(400).json({
+        message: "Authorization code missing",
+      });
+    }
+
+    const {tokens} = await oauth2Client.getToken(code);
+
+    oauth2Client.setCredentials(tokens);
+
+    console.log("Google OAuth successful");
+    console.log("Tokens received");
+
+    res.json({
+      message: "Google Oauth successful",
+    });
+    
+  } catch (error) {
+    console.error(
+      "Google OAuth error",
+      error.message
+    );
+
+    res.status(500).json({
+      message: "Google OAuth failed"
+    });
+  }
 };
