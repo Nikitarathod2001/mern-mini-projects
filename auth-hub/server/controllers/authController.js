@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
+import {google} from "googleapis";
 import oauth2Client from "../config/google.js";
 
 // --------- Register -------------
@@ -163,11 +164,46 @@ export const googleCallback = async (req, res) => {
 
     oauth2Client.setCredentials(tokens);
 
-    console.log("Google OAuth successful");
-    console.log("Tokens received");
+    const oauth2 = google.oauth2({
+      auth: oauth2Client,
+      version: "v2",
+    });
+
+    const {data} = await oauth2.userinfo.get();
+
+    if(!data.verified_email) {
+      return res.status(400).json({
+        message: "Google email is not verified",
+      });
+    }
+
+    let user = await User.findOne({
+      provider: "google",
+      providerId: data.id,
+    });
+
+    if(!user) {
+      user = await User.create({
+        name: data.name,
+        email: data.email,
+        provider: "google",
+        providerId: data.id,
+        role: "user",
+      });
+    }
+
+    const token = generateToken(user._id, user.role);
 
     res.json({
-      message: "Google Oauth successful",
+      message: "Google login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        provider: user.provider,
+      },
     });
     
   } catch (error) {
