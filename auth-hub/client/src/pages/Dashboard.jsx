@@ -1,11 +1,20 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
 
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.success("Logged out successfully!");
+    navigate("/login");
+  };
 
   useEffect(() => {
 
@@ -23,7 +32,7 @@ const Dashboard = () => {
         setUser(response.data.user);
         
       } catch (error) {
-        setMessage(error.response?.data?.message || "Unable to load profile");
+        setMessage("Unable to load profile");
       }
     }
 
@@ -36,9 +45,19 @@ const Dashboard = () => {
 
       <div className='mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-lg'>
 
-        <h1 className='mb-6 text-3xl font-bold'>
-          Dashboard
-        </h1>
+        <div className='flex items-center justify-between'>
+
+          <h1 className='text-3xl font-bold'>
+            Dashboard
+          </h1>
+
+          <button onClick={handleLogout}
+            className='rounded-lg bg-red-600 px-5 py-2 font-semibold text-white transition hover:bg-red-700'
+          >
+            Logout
+          </button>
+
+        </div>
 
         {
           user ? (

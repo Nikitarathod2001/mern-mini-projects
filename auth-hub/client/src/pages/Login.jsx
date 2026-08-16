@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
@@ -9,6 +10,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -32,6 +35,8 @@ const Login = () => {
         email: "",
         password: "",
       });
+
+      navigate("/dashboard");
       
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
