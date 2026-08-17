@@ -4,6 +4,9 @@ import generateToken from "../utils/generateToken.js";
 import {google} from "googleapis";
 import oauth2Client from "../config/google.js";
 import crypto from "crypto";
+import OTP from "../models/OTP.js";
+import transporter from "../config/email.js";
+import generateOtp from "../utils/generateOtp.js";
 
 // --------- Register -------------
 
@@ -257,6 +260,194 @@ export const googleCallback = async (req, res) => {
 
     res.status(500).json({
       message: "Google OAuth failed"
+    });
+  }
+};
+
+// -------- Send OTP ---------
+export const sendOtp = async (req, res) => {
+  try {
+
+    const {email} = req.body;
+
+    if(!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existingOtp = await OTP.findOne({
+      email: normalizedEmail,
+    });
+
+    if(existingOtp) {
+      const elapsedTime = Date.now() - existingOtp.lastSentAt.getTime();
+
+      const cooldown = 60 * 1000;
+
+      if(elapsedTime < cooldown) {
+        const remainindSeconds = Math.ceil(
+          (cooldown - elapsedTime) / 1000
+        );
+
+        return res.status(429).json({
+          message: `Please wait ${remainindSeconds} seconds before requesting another OTP.`
+        });
+      }
+
+      if(existingOtp.requestCount >= 5) {
+        return res.status(429).json({
+          message: "Maximum OTP requests reached. Please try again later.",
+        });
+      }
+    }
+
+    const otp = generateOtp();
+
+    const hashedOtp = crypto.createHash("sha256")
+                            .update(otp)
+                            .digest("hex");
+
+    const expiresAt = new Date(
+      Date.now() + 5 * 60 * 1000
+    );
+
+    if(existingOtp) {
+      existingOtp.otp = hashedOtp;
+      existingOtp.expiresAt = expiresAt;
+      existingOtp.attempts = 0;
+      existingOtp.requestCount += 1;
+      existingOtp.lastSentAt = new Date();
+
+      await existingOtp.save();
+    }
+    else {
+      await OTP.create({
+        email: normalizedEmail,
+        otp: hashedOtp,
+        expiresAt,
+        requestCount: 1,
+        lastSentAt: new Date(),
+      });
+    }
+
+    await transporter.sendMail({
+      from: `"AuthHub" <${process.env.EMAIL_USER}>`,
+      to: normalizedEmail,
+      subject: "Your AuthHub OTP",
+      text: `Your AuthHub OTP is ${otp}. It expires in 5 minutes.`,
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+    });
+    
+  } catch (error) {
+    console.error("Send OTP Error: ", error);
+
+    res.status(500).json({
+      message: "Failed to send OTP"
+    });
+  }
+};
+
+
+// ------- Verify OTP --------
+export const verifyOtp = async (req, res) => {
+  try {
+
+    const {email, otp} = req.body;
+
+    if(!email || !otp) {
+      return res.status(400).json({
+        message: "Email and OTP are required",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const otpRecord = await OTP.findOne({
+      email: normalizedEmail,
+    });
+
+    if(!otpRecord) {
+      return res.status(400).json({
+        message: "OTP not found or expired",
+      });
+    }
+
+    if(otpRecord.expiresAt < new Date()) {
+      await OTP.deleteOne({
+        _id: otpRecord._id,
+      });
+
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    if(otpRecord.attempts >= 5) {
+      await OTP.deleteOne({
+        _id: otpRecord._id,
+      });
+
+      return res.status(400).json({
+        message: "Too many incorrect attempts",
+      });
+    }
+
+    const hashedOtp = crypto.createHash("sha256")
+                            .update(otp)
+                            .digest("hex");
+
+    if(hashedOtp != otpRecord.otp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    let user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if(!user) {
+      user = await User.create({
+        name: normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        password: null,
+        role: "user",
+        provider: "otp",
+      });
+    }
+
+    await OTP.deleteOne({
+      _id: otpRecord._id,
+    });
+
+    const token = generateToken(user._id, user.role);
+
+    res.status(200).json({
+      message: "OTP verified successfully",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        provider: user.provider,
+      },
+    });
+    
+  } catch (error) {
+    console.error("Verify OTP error: ", error);
+
+    res.status(500).json({
+      message: "OTP verification failed",
     });
   }
 };

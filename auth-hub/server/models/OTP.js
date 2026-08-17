@@ -23,6 +23,16 @@ const otpSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+
+  requestCount: {
+    type: Number,
+    default: 1,
+  },
+
+  lastSentAt: {
+    type: Date,
+    default: Date.now,
+  },
 }, {timestamps: true});
 
 const OTP = mongoose.models.OTP || mongoose.model("OTP", otpSchema);
