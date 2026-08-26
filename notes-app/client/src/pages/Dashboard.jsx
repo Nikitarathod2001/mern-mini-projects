@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import NoteCard from '../components/NoteCard';
 import EmptyNotes from '../components/EmptyNotes';
+import NoteForm from '../components/NoteForm';
+NoteForm
 
 const Dashboard = () => {
 
-  const notes = [
+  const [showNoteForm, setShowNoteForm] = useState(false);
+
+  const [notes, setNotes] = useState([
     {
       id: 1,
       title: "Learn React Hooks",
@@ -43,7 +47,18 @@ const Dashboard = () => {
       date: "Aug 23",
       isPinned: true,
     },
-  ];
+  ]);
+
+  const handleNoteCreated = (newNote) => {
+    setNotes((prevNotes) => [
+      {
+        ...newNote,
+        id: newNote._id,
+        date: "Just now",
+      },
+      ...prevNotes,
+    ]);
+  };
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -71,8 +86,9 @@ const Dashboard = () => {
 
             </div>
 
-            <button type='button' 
-              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-95'>
+            <button type='button'
+              onClick={() => setShowNoteForm(true)} 
+              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 active:scale-95'>
               + New Note
             </button>
 
@@ -90,7 +106,9 @@ const Dashboard = () => {
           </div>
 
           <button type='button'
+            onClick={() => setShowNoteForm(true)}
             className='fixed bottom-5 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-2xl text-white shadow-lg transition hover:bg-gray-700 active:scale-95 md:hidden'
+            aria-label='Create new note'
           >
             +
           </button>
@@ -98,6 +116,15 @@ const Dashboard = () => {
         </main>
 
       </div>
+
+      {
+        showNoteForm && (
+          <NoteForm 
+            onClose={() => setShowNoteForm(false)}
+            onNoteCreated={handleNoteCreated}
+          />
+        )
+      }
       
     </div>
   )
