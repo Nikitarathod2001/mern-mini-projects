@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import NoteActions from './NoteActions';
 
 const NoteCard = ({note}) => {
@@ -8,7 +9,7 @@ const NoteCard = ({note}) => {
       {/* Header */}
       <div className='flex items-start justify-between gap-3'>
 
-        <button type='button'
+        <Link to={`/notes/${note._id}`}
           className='text-left'
         >
 
@@ -16,7 +17,7 @@ const NoteCard = ({note}) => {
             {note.title}
           </h2>
 
-        </button>
+        </Link>
 
         {
           note.isPinned && (
@@ -31,7 +32,7 @@ const NoteCard = ({note}) => {
       </div>
 
       {/* Content */}
-      <button type='button'
+      <Link to={`/notes/${note._id}`}
         className='mt-3 flex-1 text-left'
       >
 
@@ -39,7 +40,7 @@ const NoteCard = ({note}) => {
           {note.content}
         </p>
 
-      </button>
+      </Link>
 
       {/* Footer */}
       <div className='mt-5 flex items-center justify-between gap-3'>
