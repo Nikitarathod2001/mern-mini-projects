@@ -1,64 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import NoteCard from '../components/NoteCard';
 import EmptyNotes from '../components/EmptyNotes';
 import NoteForm from '../components/NoteForm';
-NoteForm
+import { getNotes } from '../services/noteService';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
 
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showNoteForm, setShowNoteForm] = useState(false);
-
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Learn React Hooks",
-      content:
-        "Study useState, useEffect, useContext and custom hooks.",
-      category: "Study",
-      date: "Aug 26",
-      isPinned: true,
-    },
-    {
-      id: 2,
-      title: "MERN Notes App",
-      content:
-        "Build a user-friendly notes application using MongoDB, Express, React and Node.js.",
-      category: "Projects",
-      date: "Aug 25",
-      isPinned: false,
-    },
-    {
-      id: 3,
-      title: "Shopping List",
-      content:
-        "Milk, bread, vegetables, fruits and other groceries.",
-      category: "Personal",
-      date: "Aug 24",
-      isPinned: false,
-    },
-    {
-      id: 4,
-      title: "Interview Preparation",
-      content:
-        "Practice JavaScript, React, Node.js and MongoDB interview questions.",
-      category: "Work",
-      date: "Aug 23",
-      isPinned: true,
-    },
-  ]);
 
   const handleNoteCreated = (newNote) => {
     setNotes((prevNotes) => [
-      {
-        ...newNote,
-        id: newNote._id,
-        date: "Just now",
-      },
+      newNote,
       ...prevNotes,
     ]);
   };
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+
+        setLoading(true);
+        const data = await getNotes();
+        setNotes(data.notes);
+        
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message || "Failed to load notes"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotes();
+  }, []);
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -95,15 +75,29 @@ const Dashboard = () => {
           </div>
 
           {/* Notes */}
-          <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+          {
+            loading ? (
+              <div className='flex min-h-80 items-center justify-center'>
 
-            {
-              notes.map((note) => (
-                <NoteCard key={note.id} note={note}/>
-              ))
-            }
+                <div className='text-sm text-gray-500'>
+                  Loading notes...
+                </div>
 
-          </div>
+              </div>
+            ) : notes.length > 0 ? (
+              <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+
+                {
+                  notes.map((note) => (
+                    <NoteCard key={note._id} note={note}/>
+                  ))
+                }
+
+              </div>
+            ) : (
+              <EmptyNotes/>
+            )
+          }
 
           <button type='button'
             onClick={() => setShowNoteForm(true)}

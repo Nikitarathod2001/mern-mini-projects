@@ -49,7 +49,12 @@ const NoteCard = ({note}) => {
         </span>
 
         <span className='text-xs text-gray-400'>
-          {note.date}
+          {
+            new Date(note.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          }
         </span>
 
       </div>
