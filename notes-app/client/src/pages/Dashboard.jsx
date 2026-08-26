@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import NoteCard from '../components/NoteCard';
+import EmptyNotes from '../components/EmptyNotes';
 
 const Dashboard = () => {
 
@@ -13,6 +14,7 @@ const Dashboard = () => {
         "Study useState, useEffect, useContext and custom hooks.",
       category: "Study",
       date: "Aug 26",
+      isPinned: true,
     },
     {
       id: 2,
@@ -21,6 +23,7 @@ const Dashboard = () => {
         "Build a user-friendly notes application using MongoDB, Express, React and Node.js.",
       category: "Projects",
       date: "Aug 25",
+      isPinned: false,
     },
     {
       id: 3,
@@ -29,6 +32,7 @@ const Dashboard = () => {
         "Milk, bread, vegetables, fruits and other groceries.",
       category: "Personal",
       date: "Aug 24",
+      isPinned: false,
     },
     {
       id: 4,
@@ -37,6 +41,7 @@ const Dashboard = () => {
         "Practice JavaScript, React, Node.js and MongoDB interview questions.",
       category: "Work",
       date: "Aug 23",
+      isPinned: true,
     },
   ];
 
@@ -66,7 +71,8 @@ const Dashboard = () => {
 
             </div>
 
-            <button className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700'>
+            <button type='button' 
+              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-95'>
               + New Note
             </button>
 
@@ -82,6 +88,12 @@ const Dashboard = () => {
             }
 
           </div>
+
+          <button type='button'
+            className='fixed bottom-5 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-2xl text-white shadow-lg transition hover:bg-gray-700 active:scale-95 md:hidden'
+          >
+            +
+          </button>
 
         </main>
 

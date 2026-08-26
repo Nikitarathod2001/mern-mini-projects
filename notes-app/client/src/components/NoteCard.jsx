@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import NoteActions from './NoteActions';
 
 const NoteCard = ({note}) => {
   return (
@@ -7,23 +8,41 @@ const NoteCard = ({note}) => {
       {/* Header */}
       <div className='flex items-start justify-between gap-3'>
 
-        <h2 className='line-clamp-2 font-semibold text-gray-900'>
-          {note.title}
-        </h2>
+        <button type='button'
+          className='text-left'
+        >
 
-        <button className='shrink-0 text-gray-400 opacity-0 transition group-hover:opacity-100 hover:text-gray-900'>
-          :
+          <h2 className='line-clamp-2 font-semibold text-gray-900'>
+            {note.title}
+          </h2>
+
         </button>
+
+        {
+          note.isPinned && (
+            <span className='shrink-0 text-sm'
+              title='Pinned'
+            >
+              ⭐
+            </span>
+          )
+        }
 
       </div>
 
       {/* Content */}
-      <p className='mt-3 line-clamp-3 text-sm leading-6 text-gray-500'>
-        {note.content}
-      </p>
+      <button type='button'
+        className='mt-3 flex-1 text-left'
+      >
+
+        <p className='line-clamp-4 text-sm leading-6 text-gray-500'>
+          {note.content}
+        </p>
+
+      </button>
 
       {/* Footer */}
-      <div className='mt-5 flex items-center justify-between'>
+      <div className='mt-5 flex items-center justify-between gap-3'>
 
         <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600'>
           {note.category}
@@ -32,6 +51,13 @@ const NoteCard = ({note}) => {
         <span className='text-xs text-gray-400'>
           {note.date}
         </span>
+
+      </div>
+
+      {/* Actions */}
+      <div className='mt-4 border-t border-gray-100 pt-3'>
+
+        <NoteActions isPinned={note.isPinned}/>
 
       </div>
 
