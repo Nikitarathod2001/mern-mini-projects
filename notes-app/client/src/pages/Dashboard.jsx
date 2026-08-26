@@ -95,7 +95,7 @@ const Dashboard = () => {
 
               </div>
             ) : (
-              <EmptyNotes/>
+              <EmptyNotes setShowNoteForm={setShowNoteForm}/>
             )
           }
 

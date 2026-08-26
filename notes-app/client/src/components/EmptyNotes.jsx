@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EmptyNotes = () => {
+const EmptyNotes = ({setShowNoteForm}) => {
   return (
     <div className='flex min-h-80 flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 text-center'>
 
@@ -17,6 +17,7 @@ const EmptyNotes = () => {
       </p>
 
       <button type='button'
+        onClick={() => setShowNoteForm(true)}
         className='mt-5 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700'
       >
         + Create your first note
