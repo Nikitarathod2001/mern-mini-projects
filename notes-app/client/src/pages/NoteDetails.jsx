@@ -22,7 +22,7 @@ const NoteDetails = () => {
   };
 
   const handleNoteDeleted = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const NoteDetails = () => {
           error.response?.data?.message || "Failed to load note"
         );
 
-        navigate("/");
+        navigate("/dashboard");
       } finally {
         setLoading(false);
       }
@@ -72,7 +72,7 @@ const NoteDetails = () => {
 
           <div className='mx-auto flex h-16 max-w-4xl items-center justify-between px-4 md:px-6'>
 
-            <Link to="/"
+            <Link to="/dashboard"
               className='text-sm font-medium text-gray-600 hover:text-gray-900'
             >
               ← Back to Notes

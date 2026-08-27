@@ -7,6 +7,7 @@ export const createNote = async (req, res) => {
     const {title, content, category} = req.body;
 
     const note = await Note.create({
+      user: req.user._id,
       title, content, category,
     });
 
@@ -30,7 +31,7 @@ export const createNote = async (req, res) => {
 export const getNotes = async (req, res) => {
   try {
 
-    const notes = await Note.find().sort({createdAt: -1});
+    const notes = await Note.find({user: req.user._id}).sort({createdAt: -1});
 
     res.status(200).json({
       success: true,
@@ -51,7 +52,10 @@ export const getNotes = async (req, res) => {
 export const getNoteById = async (req, res) => {
   try {
 
-    const note = await Note.findById(req.params.id);
+    const note = await Note.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
 
     if(!note) {
       return res.status(404).json({
@@ -96,8 +100,11 @@ export const updateNote = async (req, res) => {
       updates.isPinned = isPinned;
     }
 
-    const note = await Note.findByIdAndUpdate(
-      req.params.id,
+    const note = await Note.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user._id,
+      },
       updates,
       {
         new: true,
@@ -132,7 +139,10 @@ export const updateNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
   try {
 
-    const note = await Note.findByIdAndDelete(req.params.id);
+    const note = await Note.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
 
     if(!note) {
       return res.status(404).json({

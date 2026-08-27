@@ -45,7 +45,7 @@ const Login = () => {
         email: "",
         password: "",
       });
-      navigate("/");
+      navigate("/dashboard");
         
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");

@@ -4,14 +4,23 @@ import Dashboard from './pages/Dashboard';
 import NoteDetails from './pages/NoteDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
     <Routes>
-      <Route path='/' element={<Dashboard/>}/>
+      <Route path='/dashboard' element={
+        <ProtectedRoute>
+          <Dashboard/>
+        </ProtectedRoute>
+      }/>
       <Route path='/register' element={<Register/>}/>
-      <Route path='/login' element={<Login/>}/>
-      <Route path='/notes/:id' element={<NoteDetails/>}/>
+      <Route path='/' element={<Login/>}/>
+      <Route path='/notes/:id' element={
+        <ProtectedRoute>
+          <NoteDetails/>
+        </ProtectedRoute>
+      }/>
     </Routes>
   )
 }

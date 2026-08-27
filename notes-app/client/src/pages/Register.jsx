@@ -53,7 +53,7 @@ const Register = () => {
         password: ""
       });
 
-      navigate("/");
+      navigate("/dashbaord");
       
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");
@@ -145,7 +145,7 @@ const Register = () => {
         <p className='mt-6 text-center text-sm text-gray-500'>
 
           Already have an account?{" "}
-          <Link to="/login"
+          <Link to="/"
             className='font-medium text-gray-900 hover:underline'
           >
             Login
