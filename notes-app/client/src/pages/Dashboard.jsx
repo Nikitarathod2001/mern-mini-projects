@@ -26,7 +26,7 @@ const Dashboard = () => {
   const [showNoteForm, setShowNoteForm] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const handleNoteCreated = (newNote) => {
     setNotes((prevNotes) => [
@@ -40,7 +40,9 @@ const Dashboard = () => {
 
     const matchesSearch = note.title.toLowerCase().includes(searchText) || note.content.toLowerCase().includes(searchText);
 
-    const matchesCategory = category === "All" || note.category === category;
+    const matchesCategory = 
+      selectedCategory === "All" ? true : selectedCategory === "Pinned"
+        ? note.isPinned : note.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -72,7 +74,9 @@ const Dashboard = () => {
 
       <div className='flex'>
 
-        <Sidebar/>
+        <Sidebar selectedCategory={selectedCategory} 
+          onCategoryChange={setSelectedCategory}
+        />
 
         <main className='min-w-0 flex-1 p-4 md:p-6'>
 
@@ -94,10 +98,6 @@ const Dashboard = () => {
                 {/* Search */}
                 <div className='relative flex-1'>
 
-                  <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'>
-                    🔍
-                  </span>
-
                   <input type="text" 
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -105,23 +105,11 @@ const Dashboard = () => {
                     className='w-full rounded-xl border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-100'
                   />
 
-                </div>
+                  <span className='pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400'>
+                    🔍
+                  </span>
 
-                {/* Category */}
-                <select value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className='rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-gray-400'
-                >
-                  {
-                    categories.map((item) => (
-                      <option key={item} value={item}>
-                        {
-                          item === "All" ? "All Categories" : item
-                        }
-                      </option>
-                    ))
-                  }
-                </select>
+                </div>
 
               </div>
 

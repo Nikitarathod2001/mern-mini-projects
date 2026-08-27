@@ -8,10 +8,10 @@ const categories = [
   { name: "Todo", icon: "✅" },
   { name: "Personal", icon: "🧑" },
   { name: "Important", icon: "⭐" },
-  { name: "Other", icon: "" },
+  { name: "Other", icon: "📝" },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({selectedCategory, onCategoryChange}) => {
   return (
     <aside className='hidden w-64 shrink-0 border-r border-gray-200 bg-white md:block'>
 
@@ -20,14 +20,26 @@ const Sidebar = () => {
         {/* Main navigation */}
         <nav className='space-y-1'>
 
-          <button className='flex w-full items-center gap-3 rounded-lg bg-gray-100 px-3 py-2.5 text-sm font-medium text-gray-900'>
+          <button type='button'
+            onClick={() => onCategoryChange("All")} 
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+              selectedCategory === "All"
+              ? "bg-gray-100 text-gray-900"
+              : "text-gray-600 hover:bg-gray-50"
+            }`}>
 
             📋
             <span>All Notes</span>
 
           </button>
 
-          <button className='flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50'>
+          <button type='button'
+            onClick={() => onCategoryChange("Pinned")} 
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+              selectedCategory === "Pinned"
+              ? "bg-gray-100 text-gray-900"
+              : "text-gray-600 hover:bg-gray-50"
+            }`}>
 
             📌
             <span>Pinned</span>
@@ -47,8 +59,14 @@ const Sidebar = () => {
 
             {
               categories.map((category) => (
-                <button key={category.name}
-                  className='flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50'
+                <button type='button' 
+                  key={category.name}
+                  onClick={() => onCategoryChange(category.name)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                    selectedCategory === category.name
+                    ? "bg-gray-100 font-medium text-gray-900"
+                    : "text-gray-600 hover:bg-gray-50"
+                  }`}
                 >
 
                   <span>{category.icon}</span>
