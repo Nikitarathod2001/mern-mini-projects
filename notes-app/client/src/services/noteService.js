@@ -17,3 +17,8 @@ export const updateNote = async (id, noteData) => {
   );
   return response.data;
 };
+
+export const deleteNote = async (id) => {
+  const response = await api.delete(`/notes/${id}`);
+  return response.data;
+};

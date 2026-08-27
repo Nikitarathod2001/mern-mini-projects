@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { getNoteById } from '../services/noteService';
 import EditNoteModel from '../components/EditNoteModel';
+import DeleteNoteModal from '../components/DeleteNoteModal';
 
 const NoteDetails = () => {
 
@@ -14,9 +15,14 @@ const NoteDetails = () => {
   const [loading, setLoading] = useState(true);
 
   const [showEditModal, setEditShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleNoteUpdated = (updatedNote) => {
     setNote(updatedNote);
+  };
+
+  const handleNoteDeleted = () => {
+    navigate("/");
   };
 
   useEffect(() => {
@@ -82,6 +88,7 @@ const NoteDetails = () => {
               </button>
 
               <button type='button'
+                onClick={() => setShowDeleteModal(true)}
                 className='rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50'
               >
                 Delete
@@ -157,6 +164,16 @@ const NoteDetails = () => {
             note={note}
             onClose={() => setEditShowModal(false)}
             onNoteUpdated={handleNoteUpdated}
+          />
+        )
+      }
+
+      {
+        showDeleteModal && (
+          <DeleteNoteModal
+            note={note}
+            onClose={() => setShowDeleteModal(false)}
+            onDeleted={handleNoteDeleted}
           />
         )
       }
