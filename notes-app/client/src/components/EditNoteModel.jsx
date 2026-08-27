@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { updateNote } from '../services/noteService';
 
 const categories = [
+  "All",
   "Personal",
   "Work",
   "Study",

@@ -19,16 +19,6 @@ const Navbar = () => {
 
         </div>
 
-        {/* Search */}
-        <div className='hidden w-full max-w-md md:block'>
-
-          <input type="text" 
-            placeholder='Search notes...'
-            className='w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm outline-none transition focus:border-gray-400 focus:bg-white'
-          />
-
-        </div>
-
         {/* Profile */}
         <button className='flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100'>
 
