@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import NoteActions from './NoteActions';
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const NoteCard = ({note}) => {
   return (
@@ -21,10 +22,10 @@ const NoteCard = ({note}) => {
 
         {
           note.isPinned && (
-            <span className='shrink-0 text-sm'
+            <span className='shrink-0 text-sm text-red-900'
               title='Pinned'
             >
-              📌
+              <FontAwesomeIcon icon={faThumbtack}/>
             </span>
           )
         }

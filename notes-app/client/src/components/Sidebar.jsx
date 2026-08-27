@@ -1,14 +1,48 @@
-import React from 'react'
+import React from 'react';
+import {faBookOpen, faBriefcase, faLightbulb, faLaptopCode, faCircleCheck, faUser, faFolder, faStar, faNotesMedical, faThumbtack} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const categories = [
-  { name: "Study", icon: "📚" },
-  { name: "Work", icon: "💼" },
-  { name: "Ideas", icon: "💡" },
-  { name: "Projects", icon: "💻" },
-  { name: "Todo", icon: "✅" },
-  { name: "Personal", icon: "🧑" },
-  { name: "Important", icon: "⭐" },
-  { name: "Other", icon: "📝" },
+  {
+    name: "Study",
+    icon: faBookOpen,
+    color: "text-blue-500",
+  },
+  {
+    name: "Work",
+    icon: faBriefcase,
+    color: "text-indigo-500",
+  },
+  {
+    name: "Ideas",
+    icon: faLightbulb,
+    color: "text-yellow-500",
+  },
+  {
+    name: "Projects",
+    icon: faLaptopCode,
+    color: "text-purple-500",
+  },
+  {
+    name: "Todo",
+    icon: faCircleCheck,
+    color: "text-green-500",
+  },
+  {
+    name: "Personal",
+    icon: faUser,
+    color: "text-pink-500",
+  },
+  {
+    name: "Important",
+    icon: faStar,
+    color: "text-orange-500",
+  },
+  {
+    name: "Other",
+    icon: faFolder,
+    color: "text-gray-500",
+  },
 ];
 
 const Sidebar = ({selectedCategory, onCategoryChange}) => {
@@ -28,7 +62,9 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
               : "text-gray-600 hover:bg-gray-50"
             }`}>
 
-            📋
+            <span className='w-5 text-gray-900'>
+              <FontAwesomeIcon icon={faNotesMedical}/>
+            </span>
             <span>All Notes</span>
 
           </button>
@@ -41,7 +77,9 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
               : "text-gray-600 hover:bg-gray-50"
             }`}>
 
-            📌
+            <span className='w-5 text-red-700'>
+              <FontAwesomeIcon icon={faThumbtack}/>
+            </span>
             <span>Pinned</span>
 
           </button>
@@ -69,7 +107,9 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
                   }`}
                 >
 
-                  <span>{category.icon}</span>
+                  <span className={`w-5 ${category.color}`}>
+                    <FontAwesomeIcon icon={category.icon}/>
+                  </span>
                   <span>{category.name}</span>
 
                 </button>

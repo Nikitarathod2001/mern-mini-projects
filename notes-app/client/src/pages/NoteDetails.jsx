@@ -6,6 +6,9 @@ import { getNoteById } from '../services/noteService';
 import EditNoteModel from '../components/EditNoteModel';
 import DeleteNoteModal from '../components/DeleteNoteModal';
 
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const NoteDetails = () => {
 
   const {id} = useParams();
@@ -130,8 +133,8 @@ const NoteDetails = () => {
 
               {
                 note.isPinned && (
-                  <span className='text-sm text-gray-500'>
-                    📌 Pinned
+                  <span className='text-sm text-red-900'>
+                    <FontAwesomeIcon icon={faThumbtack}/>
                   </span>
                 )
               }
