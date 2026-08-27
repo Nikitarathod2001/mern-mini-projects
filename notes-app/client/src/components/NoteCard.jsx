@@ -4,7 +4,7 @@ import NoteActions from './NoteActions';
 
 const NoteCard = ({note}) => {
   return (
-    <article className='group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'>
+    <article className={`group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md ${note.isPinned ? "border-gray-400" : "border-gray-200"}`}>
 
       {/* Header */}
       <div className='flex items-start justify-between gap-3'>
@@ -24,7 +24,7 @@ const NoteCard = ({note}) => {
             <span className='shrink-0 text-sm'
               title='Pinned'
             >
-              ⭐
+              📌
             </span>
           )
         }
@@ -61,11 +61,11 @@ const NoteCard = ({note}) => {
       </div>
 
       {/* Actions */}
-      <div className='mt-4 border-t border-gray-100 pt-3'>
+      {/* <div className='mt-4 border-t border-gray-100 pt-3'>
 
         <NoteActions isPinned={note.isPinned}/>
 
-      </div>
+      </div> */}
 
     </article>
   )

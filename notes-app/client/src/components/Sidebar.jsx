@@ -8,7 +8,7 @@ const categories = [
   { name: "Todo", icon: "✅" },
   { name: "Personal", icon: "🧑" },
   { name: "Important", icon: "⭐" },
-  { name: "Other", icon: "📌" },
+  { name: "Other", icon: "" },
 ];
 
 const Sidebar = () => {
@@ -29,7 +29,7 @@ const Sidebar = () => {
 
           <button className='flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50'>
 
-            ⭐
+            📌
             <span>Pinned</span>
 
           </button>

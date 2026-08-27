@@ -21,6 +21,7 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
     title: note.title,
     content: note.content,
     category: note.category,
+    isPinned: note.isPinned,
   });
 
   const [loading, setLoading] = useState(false);
@@ -122,6 +123,37 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
             }
           </select>
 
+          {/* Pin / UnPin */}
+          <div className='flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3'>
+
+            <div>
+
+              <p className='text-sm font-medium text-gray-900'>
+                {
+                  formData.isPinned ? "Pinned Note" : "Pin Note"
+                }
+              </p>
+
+            </div>
+
+            <button type='button'
+              onClick={() => setFormData((prev) => ({
+                ...prev,
+                isPinned: !prev.isPinned
+              }))}
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                formData.isPinned
+                ? "bg-gray-900 text-white hover:bg-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {
+                formData.isPinned ? "Unpin" : "Pin"
+              }
+            </button>
+
+          </div>
+
           <div className='flex justify-end gap-3'>
 
             <button type='button'
@@ -133,7 +165,7 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
 
             <button type="submit"
               disabled={loading}
-              className='rounded-lg bg-gray-900 px-4 py-2 text-white'
+              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 active:scale-[0.98]'
             >
               {
                 loading ? "Updating..." : "Save Changes"

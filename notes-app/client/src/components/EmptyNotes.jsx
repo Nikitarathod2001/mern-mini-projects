@@ -20,7 +20,7 @@ const EmptyNotes = ({setShowNoteForm}) => {
         onClick={() => setShowNoteForm(true)}
         className='mt-5 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700'
       >
-        + Create your first note
+        + Create Note
       </button>
       
     </div>
