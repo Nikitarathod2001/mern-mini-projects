@@ -53,7 +53,7 @@ const Register = () => {
         password: ""
       });
 
-      navigate("/dashbaord");
+      navigate("/");
       
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");
@@ -133,7 +133,7 @@ const Register = () => {
 
           <button type='submit'
             disabled={loading}
-            className='w-full rounded-lg bg-gray-900 px-4 py-3 font-medium text-white hover:bg-gray-700 disabled:opacity-50 cursor-pointer'
+            className='w-full rounded-lg bg-orange-500 px-4 py-3 font-medium text-white hover:bg-orange-600 disabled:opacity-50 cursor-pointer'
           >
             {
               loading ? "Creating account..." : "Create Account"
@@ -146,7 +146,7 @@ const Register = () => {
 
           Already have an account?{" "}
           <Link to="/"
-            className='font-medium text-gray-900 hover:underline cursor-pointer'
+            className='font-medium text-orange-400 hover:underline cursor-pointer'
           >
             Login
           </Link>

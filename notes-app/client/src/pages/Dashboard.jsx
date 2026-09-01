@@ -119,7 +119,7 @@ const Dashboard = () => {
 
             <button type='button'
               onClick={() => setShowNoteForm(true)} 
-              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 active:scale-95 cursor-pointer'>
+              className='rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-orange-600 active:scale-95 cursor-pointer'>
               + New Note
             </button>
 
@@ -167,7 +167,7 @@ const Dashboard = () => {
                     setSearch("");
                     setCategory("All");
                   }}
-                  className='mt-5 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700'
+                  className='mt-5 rounded-lg bg-orange-50 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-100 cursor-pointer'
                 >
                   Clear Filters
                 </button>
@@ -178,7 +178,7 @@ const Dashboard = () => {
 
           <button type='button'
             onClick={() => setShowNoteForm(true)}
-            className='fixed bottom-5 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-2xl text-white shadow-lg transition hover:bg-gray-700 active:scale-95 md:hidden'
+            className='fixed bottom-5 right-5 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-2xl text-white shadow-lg transition hover:bg-orange-600 active:scale-95 md:hidden cursor-pointer'
             aria-label='Create new note'
           >
             +

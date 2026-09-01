@@ -14,7 +14,7 @@ const NoteCard = ({note}) => {
           className='text-left'
         >
 
-          <h2 className='line-clamp-2 font-semibold text-gray-900'>
+          <h2 className='line-clamp-2 font-semibold text-slate-900'>
             {note.title}
           </h2>
 
@@ -46,7 +46,7 @@ const NoteCard = ({note}) => {
       {/* Footer */}
       <div className='mt-5 flex items-center justify-between gap-3'>
 
-        <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600'>
+        <span className='rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-orange-600'>
           {note.category}
         </span>
 

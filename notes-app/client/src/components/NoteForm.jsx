@@ -181,7 +181,7 @@ const NoteForm = ({onClose, onNoteCreated}) => {
 
             <button type="submit"
               disabled={loading}
-              className='rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'
+              className='rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'
             >
               {loading ? "Creating..." : "Create Note"}
             </button>

@@ -27,12 +27,12 @@ const Navbar = () => {
         {/* Logo */}
         <div className='flex items-center gap-2'>
 
-          <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-gray-900 text-white'>
+          <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-white'>
             📝
           </div>
 
-          <h1 className='text-base font-bold text-gray-900 sm:text-lg'>
-            NotesNest
+          <h1 className='text-base font-bold text-slate-900 sm:text-lg'>
+            Notes<span className='text-orange-500'>Nest</span>
           </h1>
 
         </div>
@@ -43,7 +43,7 @@ const Navbar = () => {
           <button onClick={() => setShowMenu((prev) => !prev)} 
             className='flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100 cursor-pointer'>
 
-            <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold'>
+            <div className='flex h-8 w-8 items-center justify-center rounded-full text-orange-600 bg-gray-200 text-sm font-semibold'>
               {userInitial}
             </div>
 

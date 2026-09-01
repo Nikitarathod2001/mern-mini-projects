@@ -101,14 +101,14 @@ const NoteDetails = () => {
 
               <button type='button'
                 onClick={() => setEditShowModal(true)}
-                className='rounded-lg px-3 py-2 text-sm font-medium transition text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer'
+                className='rounded-lg px-3 py-2 text-sm font-medium transition text-orange-600 bg-orange-50 hover:bg-orange-100 hover:text-orange-900 cursor-pointer'
               >
                 Edit
               </button>
 
               <button type='button'
                 onClick={() => setShowDeleteModal(true)}
-                className='rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 cursor-pointer'
+                className='rounded-lg px-3 py-2 text-sm font-medium bg-red-50 text-red-600 transition hover:bg-red-100 cursor-pointer'
               >
                 Delete
               </button>
@@ -127,7 +127,7 @@ const NoteDetails = () => {
             {/* Category + Pin */}
             <div className='flex items-center justify-between gap-4'>
 
-              <span className='rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600'>
+              <span className='rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-orange-600'>
                 {note.category}
               </span>
 
@@ -142,7 +142,7 @@ const NoteDetails = () => {
             </div>
 
             {/* Title */}
-            <h1 className='mt-6 text-3xl font-bold leading-tight text-gray-900 md:text-4xl'>
+            <h1 className='mt-6 text-3xl font-bold leading-tight text-slate-900 md:text-4xl'>
               {note.title}
             </h1>
 
