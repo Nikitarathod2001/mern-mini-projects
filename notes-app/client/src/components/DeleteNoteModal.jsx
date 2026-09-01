@@ -31,11 +31,6 @@ const DeleteNoteModal = ({
 
       <div className='w-full max-w-md rounded-2xl bg-white p-6 shadow-xl'>
 
-        {/* Icon */}
-        <div className='flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-xl'>
-          🗑️
-        </div>
-
         {/* Content */}
         <h2 className='mt-5 text-xl font-bold text-gray-900'>
           Delete this note?
@@ -57,7 +52,7 @@ const DeleteNoteModal = ({
           <button type='button'
             onClick={onClose}
             disabled={loading}
-            className='rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+            className='rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 cursor-pointer'
           >
             Cancel
           </button>
@@ -65,7 +60,7 @@ const DeleteNoteModal = ({
           <button type='button'
             onClick={handleDelete}
             disabled={loading}
-            className='rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50'
+            className='rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'
           >
             {
               loading ? "Deleting..." : "Delete Note"

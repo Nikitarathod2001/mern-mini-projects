@@ -56,7 +56,7 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
 
           <button type='button'
             onClick={() => onCategoryChange("All")} 
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition cursor-pointer ${
               selectedCategory === "All"
               ? "bg-gray-100 text-gray-900"
               : "text-gray-600 hover:bg-gray-50"
@@ -71,7 +71,7 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
 
           <button type='button'
             onClick={() => onCategoryChange("Pinned")} 
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition cursor-pointer ${
               selectedCategory === "Pinned"
               ? "bg-gray-100 text-gray-900"
               : "text-gray-600 hover:bg-gray-50"
@@ -100,7 +100,7 @@ const Sidebar = ({selectedCategory, onCategoryChange}) => {
                 <button type='button' 
                   key={category.name}
                   onClick={() => onCategoryChange(category.name)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition cursor-pointer ${
                     selectedCategory === category.name
                     ? "bg-gray-100 font-medium text-gray-900"
                     : "text-gray-600 hover:bg-gray-50"

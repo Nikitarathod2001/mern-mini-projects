@@ -101,14 +101,14 @@ const NoteDetails = () => {
 
               <button type='button'
                 onClick={() => setEditShowModal(true)}
-                className='rounded-lg px-3 py-2 text-sm font-medium transition text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                className='rounded-lg px-3 py-2 text-sm font-medium transition text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer'
               >
                 Edit
               </button>
 
               <button type='button'
                 onClick={() => setShowDeleteModal(true)}
-                className='rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50'
+                className='rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 cursor-pointer'
               >
                 Delete
               </button>

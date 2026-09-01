@@ -1,4 +1,4 @@
-# 📝 Notes App
+# 📝 Notes App - NotesNest
 
 A simple and user-friendly Notes Application built using the **MERN Stack**.
 

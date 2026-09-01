@@ -119,7 +119,7 @@ const Dashboard = () => {
 
             <button type='button'
               onClick={() => setShowNoteForm(true)} 
-              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 active:scale-95'>
+              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-700 active:scale-95 cursor-pointer'>
               + New Note
             </button>
 
@@ -151,7 +151,7 @@ const Dashboard = () => {
               <div className='flex min-h-80 flex-col items-center justify-center text-center'>
 
                 <div className='text-4xl'>
-                  🔍
+                  <FontAwesomeIcon icon={faSearch}/>
                 </div>
 
                 <h2 className='mt-4 text-lg font-semibold text-gray-900'>

@@ -2,6 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import toast from "react-hot-toast";
 import api from "../services/api";
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const categories = [
   "Personal",
@@ -76,7 +78,7 @@ const NoteForm = ({onClose, onNoteCreated}) => {
 
           <div>
 
-            <h2 className='text-xl font-bold text-gray-900'>
+            <h2 className='text-xl font-bold text-gray-900 cursor-pointer'>
               Create Note
             </h2>
 
@@ -88,9 +90,9 @@ const NoteForm = ({onClose, onNoteCreated}) => {
 
           <button type="button"
             onClick={onClose}
-            className='rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900'
+            className='rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900 cursor-pointer'
           >
-            X
+            <FontAwesomeIcon icon={faXmarkCircle}/>
           </button>
 
         </div>
@@ -172,14 +174,14 @@ const NoteForm = ({onClose, onNoteCreated}) => {
             <button type='button'
               onClick={onClose}
               disabled={loading}
-              className='rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+              className='rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 cursor-pointer'
             >
               Cancel
             </button>
 
             <button type="submit"
               disabled={loading}
-              className='rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50'
+              className='rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'
             >
               {loading ? "Creating..." : "Create Note"}
             </button>

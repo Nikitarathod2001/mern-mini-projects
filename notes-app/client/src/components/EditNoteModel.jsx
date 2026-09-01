@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import toast from "react-hot-toast";
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { updateNote } from '../services/noteService';
 
@@ -80,9 +82,9 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
           </h2>
 
           <button onClick={onClose}
-            className='rounded-lg p-2 hover:bg-gray-100'
+            className='rounded-lg p-2 text-red-700 hover:bg-gray-100 cursor-pointer'
           >
-            X
+            <FontAwesomeIcon icon={faXmarkCircle}/>
           </button>
 
         </div>
@@ -141,7 +143,7 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
                 ...prev,
                 isPinned: !prev.isPinned
               }))}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition cursor-pointer ${
                 formData.isPinned
                 ? "bg-gray-900 text-white hover:bg-gray-800"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -158,14 +160,14 @@ const EditNoteModel = ({note, onClose, onNoteUpdated}) => {
 
             <button type='button'
               onClick={onClose}
-              className='rounded-lg border px-4 py-2'
+              className='rounded-lg border px-4 py-2 cursor-pointer'
             >
               Cancel
             </button>
 
             <button type="submit"
               disabled={loading}
-              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 active:scale-[0.98]'
+              className='rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 active:scale-[0.98] cursor-pointer'
             >
               {
                 loading ? "Updating..." : "Save Changes"
