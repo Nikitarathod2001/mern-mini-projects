@@ -15,10 +15,15 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const {name, value} = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "username"
+        ? value.toLowerCase().replace(/[^a-z0-9_-]/g, "")
+        : value
+    }));
   };
 
   const handleSubmit = async (e) => {

@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 // Endpoints
 app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 
 const startServer = async () => {
   try {
