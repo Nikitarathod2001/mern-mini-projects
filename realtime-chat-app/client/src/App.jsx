@@ -2,15 +2,9 @@ import React from 'react';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {Toaster} from "react-hot-toast";
 import Chat from './pages/Chat';
-
-function Login() {
-  return <h1>Login Page</h1>;
-}
-
-function Register() {
-  return <h1>Register Page</h1>;
-}
-
+import Register from './pages/Register';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
@@ -23,8 +17,11 @@ const App = () => {
         <Routes>
 
           <Route path='/login' element={<Login/>}/>
-          <Route path='/register' element={<Register/>}/>
-          <Route path='/chat' element={<Chat/>}/>
+          <Route path='/' element={<Register/>}/>
+          
+          <Route element={<ProtectedRoute/>}>
+            <Route path='/chat' element={<Chat/>}/>
+          </Route>
 
         </Routes>
 
