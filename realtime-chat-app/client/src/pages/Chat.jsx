@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import socket from "../services/socket";
 
 const Chat = () => {
 
@@ -33,6 +34,28 @@ const Chat = () => {
   const filteredUsers = users.filter((item) => 
     item.username.toLowerCase().includes(search.toLowerCase())
   );
+
+  useEffect(() => {
+    socket.auth = {
+      token: localStorage.getItem("chat_token")
+    };
+
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO: ", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO");
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
