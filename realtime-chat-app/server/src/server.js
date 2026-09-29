@@ -4,6 +4,7 @@ import "dotenv/config";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import messageRouter from "./routes/messageRoute.js";
 
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 // Endpoints
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/messages", messageRouter);
 
 const startServer = async () => {
   try {
