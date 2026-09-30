@@ -76,7 +76,23 @@ io.on("connection", (socket) => {
 
   const userId = socket.userId;
 
-  onlineUsers.set(userId, socket.id);
+  const wasOffline = !onlineUsers.has(userId);
+
+  if(!onlineUsers.has(userId)) {
+    onlineUsers.set(userId, new Set());
+  }
+
+  onlineUsers.get(userId).add(socket.id);
+
+  // Send currently online users to this user
+  socket.emit(
+    "online-users", Array.from(onlineUsers.keys())
+  );
+
+  // Tell other users that this user is online
+  if(wasOffline) {
+    socket.broadcast.emit("user-online", userId);
+  }
 
   console.log("Online user: ", userId);
 
@@ -108,13 +124,14 @@ io.on("connection", (socket) => {
       ]);
 
       // Send message to receiver
-      const receiverSocketId = onlineUsers.get(receiver);
+      const receiverSockets = onlineUsers.get(receiver);
 
-      if(receiverSocketId) {
-        io.to(receiverSocketId).emit(
-          "new-message",
-          populatedMessage
-        );
+      if(receiverSockets) {
+        receiverSockets.forEach((socketId) => {
+          io.to(socketId).emit(
+            "new-message", populatedMessage
+          );
+        });
       }
 
       socket.emit("message-sent", populatedMessage);
@@ -125,9 +142,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    onlineUsers.delete(userId);
+    const userSockets = onlineUsers.get(userId);
 
-    console.log("Socket disconnected: ", socket.id);
+    if(!userSockets) {
+      return;
+    }
+
+    userSockets.delete(socket.id);
+    
+    if(userSockets.size === 0) {
+      onlineUsers.delete(userId);
+
+      socket.broadcast.emit("user-offline", userId);
+    }
+
+    console.log("User disconnected: ", socket.id);
   });
 });
 

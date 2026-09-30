@@ -19,6 +19,8 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
 
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -132,6 +134,53 @@ const Chat = () => {
     fetchMessages();
   }, [selectedUser]);
 
+  // Online Users
+  useEffect(() => {
+    const handleOnlineUsers = (users) => {
+      setOnlineUsers(new Set(users));
+    }
+
+    socket.on("online-users", handleOnlineUsers);
+
+    return () => {
+      socket.off("online-users", handleOnlineUsers);
+    };
+  }, []);
+
+  // User is online
+  useEffect(() => {
+    const handleUserOnline = (userId) => {
+      setOnlineUsers((prev) => {
+        const updated = new Set(prev);
+        updated.add(userId);
+        return updated;
+      });
+    };
+
+    socket.on("user-online", handleUserOnline);
+
+    return () => {
+      socket.off("user-online", handleUserOnline);
+    };
+  }, []);
+
+  // User is offline
+  useEffect(() => {
+    const handleUserOffline = (userId) => {
+      setOnlineUsers((prev) => {
+        const updated = new Set(prev);
+        updated.delete(userId);
+        return updated;
+      });
+    };
+
+    socket.on("user-offline", handleUserOffline);
+
+    return () => {
+      socket.off("user-offline", handleUserOffline);
+    };
+  }, []);
+
   return (
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
 
@@ -187,9 +236,15 @@ const Chat = () => {
                   }`}
                 >
 
-                  <h3 className='text-sm truncate'>
-                    {item.username}
-                  </h3>
+                  <div className='flex items-center gap-2'>
+
+                    <span className={`w-2 h-2 rounded-full ${onlineUsers.has(item._id) ? "bg-green-500" : "bg-gray-400"}`}/>
+
+                    <h3 className='text-sm truncate'>
+                      {item.username}
+                    </h3>
+
+                  </div>
 
                 </div>
               ))
@@ -221,6 +276,12 @@ const Chat = () => {
                   <h2 className='text-lg sm:text-xl font-bold truncate'>
                     {selectedUser.username}
                   </h2>
+
+                  <p className={`text-sm ${onlineUsers.has(selectedUser._id) ? "text-green-500" : "text-gray-400"}`}>
+                    {
+                      onlineUsers.has(selectedUser._id) ? "Online" : "Offline"
+                    }
+                  </p>
                 </div>
 
               </header>
