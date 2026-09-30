@@ -173,9 +173,38 @@ export const SocketProvider = ({children}) => {
     socket.emit("stop-typing", receiverId);
   };
 
+  // Mark messages read event
+  const markMessagesRead = (senderId) => {
+    socket.emit("mark-messages-read", senderId);
+  };
+
+  // Handle mark messages
+  useEffect(() => {
+    const handleMessagesRead = ({readerId}) => {
+      setMessages((prev) => 
+        prev.map((message) => {
+          if(message?.receiver?._id && String(message.receiver._id) === String(readerId)) {
+            return {
+              ...message,
+              status: "read",
+            };
+          }
+
+          return message;
+        })
+      );
+    };
+
+    socket.on("messages-read", handleMessagesRead);
+
+    return () => {
+      socket.off("messages-read", handleMessagesRead);
+    };
+  }, []);
+
   return (
     <SocketContext.Provider value={{
-      onlineUsers, messages, sendMessage, clearMessages, loadMessages, typingUsers, startTyping, stopTyping
+      onlineUsers, messages, sendMessage, clearMessages, loadMessages, typingUsers, startTyping, stopTyping, markMessagesRead
     }}>
       {children}
     </SocketContext.Provider>

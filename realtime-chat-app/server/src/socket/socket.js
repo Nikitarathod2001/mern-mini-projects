@@ -76,6 +76,13 @@ const setupSocket = (httpServer) => {
           content: content.trim(),
         });
 
+        const receiverSockets = onlineUsers.get(receiver);
+
+        if(receiverSockets && receiverSockets.size > 0) {
+          message.status = "delivered";
+          await message.save();
+        }
+
         const populatedMessage = await message.populate([
           {
             path: "sender",
@@ -87,10 +94,8 @@ const setupSocket = (httpServer) => {
           }
         ]);
 
-        // Send message to receiver
-        const receiverSockets = onlineUsers.get(receiver);
-
-        if(receiverSockets) {
+        // Send message to the receiver
+        if(receiverSockets && receiverSockets.size > 0) {
           receiverSockets.forEach((socketId) => {
             io.to(socketId).emit(
               "new-message", populatedMessage
@@ -136,6 +141,50 @@ const setupSocket = (httpServer) => {
           userId: socket.userId,
         });
       });
+    });
+
+    // Mark messages read
+    socket.on("mark-messages-read", async (senderId) => {
+      try {
+
+        const messages = await Message.find({
+          sender: senderId,
+          receiver: socket.userId,
+          status: {$ne: "read"},
+        });
+
+        if(messages.length === 0) {
+          return;
+        }
+
+        await Message.updateMany(
+          {
+            sender: senderId,
+            receiver: socket.userId,
+            status: {$ne: "read"},
+          },
+          {
+            $set: {
+              status: "read",
+            },
+          }
+        );
+
+        const senderSockets = onlineUsers.get(senderId);
+
+        if(senderSockets) {
+          senderSockets.forEach((socketId) => {
+            io.to(socketId).emit("messages-read", {
+              readerId: socket.userId,
+            })
+          });
+        }
+
+        console.log(`Messages from ${senderId} marked as read by ${socket.userId}`);
+        
+      } catch (error) {
+        console.error("Mark messages as read error: ", error);
+      }
     });
 
     // Disconnect

@@ -4,7 +4,7 @@ import api from "../services/api";
 import { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPaperPlane, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPaperPlane, faArrowLeft, faCheck, faCheckDouble} from "@fortawesome/free-solid-svg-icons";
 import toast from 'react-hot-toast';
 import { useSocket } from '../context/SocketContext';
 
@@ -14,7 +14,7 @@ const Chat = () => {
 
   const {
     onlineUsers, messages, sendMessage, loadMessages,
-    typingUsers, startTyping, stopTyping
+    typingUsers, startTyping, stopTyping, markMessagesRead
   } = useSocket();
 
   const [users, setUsers] = useState([]);
@@ -24,8 +24,6 @@ const Chat = () => {
   const [messageInput, setMessageInput] = useState("");
 
   const messagesEndRef = useRef(null);
-
-  const [userTyping, setUserTyping] = useState(false);
 
   const typingTimeoutRef = useRef(null);
 
@@ -78,6 +76,8 @@ const Chat = () => {
       const response = await api.get(`/messages/${selectedUser._id}`);
 
       loadMessages(response.data.messages);
+
+      markMessagesRead(selectedUser._id);
       
     } catch (error) {
       toast.error("Failed to load messages");
@@ -95,9 +95,13 @@ const Chat = () => {
 
   // Conversation Messages
   const conversationMessages = messages.filter((message) => {
+    if(!message?.sender || !message?.receiver || !selectedUser) {
+      return false;
+    }
+
     const senderId = String(message.sender._id);
     const receiverId = String(message.receiver._id);
-    const selectedId = String(selectedUser?._id);
+    const selectedId = String(selectedUser._id);
 
     return (
       senderId === selectedId || receiverId === selectedId
@@ -189,6 +193,19 @@ const Chat = () => {
     setMessageInput("");
     setSelectedUser(item);
   };
+
+  // Mark newly received messages as read
+  useEffect(() => {
+    if(!selectedUser) {
+      return;
+    }
+
+    const unreadMessages = conversationMessages.filter((message) => String(message.sender._id) === String(selectedUser._id) && message.status !== "read");
+
+    if(unreadMessages.length > 0) {
+      markMessagesRead(selectedUser._id);
+    }
+  }, [conversationMessages, selectedUser]);
 
   return (
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
@@ -325,7 +342,39 @@ const Chat = () => {
                           >
 
                             <div className={`max-w-[70%] rounded-4xl px-4 py-2 ${isMine ? "bg-teal-800 text-white" : "bg-white text-gray-900"}`}>
-                              {message.content}
+                              <span>
+                                {message.content}
+                              </span>
+
+                              {
+                                isMine && (
+                                  <>
+                                    {
+                                      message.status === "sent" && (
+                                        <FontAwesomeIcon icon={faCheck}
+                                          className='text-[11px] text-gray-300 ml-1'
+                                        />
+                                      )
+                                    }
+
+                                    {
+                                      message.status === "delivered" && (
+                                        <FontAwesomeIcon icon={faCheckDouble}
+                                          className='text-[11px] text-gray-300 ml-1'
+                                        />
+                                      )
+                                    }
+
+                                    {
+                                      message.status === "read" && (
+                                        <FontAwesomeIcon icon={faCheckDouble}
+                                          className='text-[11px] text-blue-300 ml-1'
+                                        />
+                                      )
+                                    }
+                                  </>
+                                )
+                              }
                             </div>
 
                           </div>
