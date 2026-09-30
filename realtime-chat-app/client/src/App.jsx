@@ -5,6 +5,7 @@ import Chat from './pages/Chat';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           
           <Route element={<ProtectedRoute/>}>
             <Route path='/chat' element={<Chat/>}/>
+            <Route path='/profile' element={<Profile/>}/>
           </Route>
 
         </Routes>
