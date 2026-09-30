@@ -2,24 +2,25 @@ import React from 'react';
 import {useAuth} from "../context/AuthContext";
 import api from "../services/api";
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import socket from "../services/socket";
 import toast from 'react-hot-toast';
+import { useSocket } from '../context/SocketContext';
 
 const Chat = () => {
 
   const {user, logout, token} = useAuth();
 
+  const {onlineUsers, messages, sendMessage, loadMessages} = useSocket();
+
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   
-  const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
 
-  const [onlineUsers, setOnlineUsers] = useState(new Set());
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -41,76 +42,19 @@ const Chat = () => {
     item.username.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Socket connection
-  useEffect(() => {
-    if(!token) {
-      return;
-    }
-
-    socket.auth = {
-      token,
-    };
-
-    socket.connect();
-
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO: ", socket.id);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO");
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.disconnect();
-    };
-  }, [token]);
-
   // Send message
-  const sendMessage = () => {
+  const handleSendMessage = () => {
     if(!messageInput.trim() || !selectedUser) {
       return;
     }
 
-    socket.emit("send-message", {
-      receiver: selectedUser._id,
-      content: messageInput.trim()
-    });
+    sendMessage(
+      selectedUser._id,
+      messageInput.trim()
+    );
 
     setMessageInput("");
   };
-
-  // Handle message sent
-  useEffect(() => {
-    const handleMessageSent = (message) => {
-      if(message.receiver._id === selectedUser?._id) {
-        setMessages((prev) => [...prev, message]);
-      }
-    };
-
-    socket.on("message-sent", handleMessageSent);
-
-    return () => {
-      socket.off("message-sent", handleMessageSent);
-    };
-  }, [selectedUser]);
-
-  // Handle new messages
-  useEffect(() => {
-    const handleNewMessage = (message) => {
-      if(message.sender._id === selectedUser?._id || message.receiver._id === selectedUser?._id) {
-        setMessages((prev) => [...prev, message]);
-      }
-    };
-
-    socket.on("new-message", handleNewMessage);
-
-    return () => {
-      socket.off("new-message", handleNewMessage);
-    };
-  }, [selectedUser]);
 
   // Fetch old messages
   const fetchMessages = async () => {
@@ -118,7 +62,7 @@ const Chat = () => {
 
       const response = await api.get(`/messages/${selectedUser._id}`);
 
-      setMessages(response.data.messages);
+      loadMessages(response.data.messages);
       
     } catch (error) {
       toast.error("Failed to load messages");
@@ -134,52 +78,32 @@ const Chat = () => {
     fetchMessages();
   }, [selectedUser]);
 
-  // Online Users
+  // Conversation Messages
+  const conversationMessages = messages.filter((message) => {
+    const senderId = String(message.sender._id);
+    const receiverId = String(message.receiver._id);
+    const selectedId = String(selectedUser?._id);
+
+    return (
+      senderId === selectedId || receiverId === selectedId
+    );
+  });
+
+  // Scroll Function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
+  // Automatically scroll
   useEffect(() => {
-    const handleOnlineUsers = (users) => {
-      setOnlineUsers(new Set(users));
+    if(!selectedUser) {
+      return;
     }
 
-    socket.on("online-users", handleOnlineUsers);
-
-    return () => {
-      socket.off("online-users", handleOnlineUsers);
-    };
-  }, []);
-
-  // User is online
-  useEffect(() => {
-    const handleUserOnline = (userId) => {
-      setOnlineUsers((prev) => {
-        const updated = new Set(prev);
-        updated.add(userId);
-        return updated;
-      });
-    };
-
-    socket.on("user-online", handleUserOnline);
-
-    return () => {
-      socket.off("user-online", handleUserOnline);
-    };
-  }, []);
-
-  // User is offline
-  useEffect(() => {
-    const handleUserOffline = (userId) => {
-      setOnlineUsers((prev) => {
-        const updated = new Set(prev);
-        updated.delete(userId);
-        return updated;
-      });
-    };
-
-    socket.on("user-offline", handleUserOffline);
-
-    return () => {
-      socket.off("user-offline", handleUserOffline);
-    };
-  }, []);
+    scrollToBottom();
+  }, [conversationMessages, selectedUser]);
 
   return (
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
@@ -301,7 +225,7 @@ const Chat = () => {
 
                       </div>
                     ) : (
-                      messages.map((message) => {
+                      conversationMessages.map((message) => {
 
                         const isMine = String(message.sender._id) === String(user.id);
 
@@ -321,6 +245,9 @@ const Chat = () => {
                     )
                   }
 
+                  {/* Scroll target */}
+                  <div ref={messagesEndRef}/>
+
                 </div>
 
               </div>
@@ -337,7 +264,7 @@ const Chat = () => {
                     className='flex-1 min-w-0 border border-gray-300 rounded-4xl px-3 sm:px-4 py-3 outline-none'
                   />
 
-                  <button onClick={sendMessage} 
+                  <button onClick={handleSendMessage} 
                     className='bg-teal-600 hover:bg-teal-700 text-white px-4 sm:px-6 py-3 rounded-full transition shrink-0'>
                     
                     <span className='hidden sm:inline cursor-pointer'>
