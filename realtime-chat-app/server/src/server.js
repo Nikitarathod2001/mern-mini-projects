@@ -8,6 +8,7 @@ import messageRouter from "./routes/messageRoute.js";
 import {createServer} from "http";
 import {Server} from "socket.io";
 import jwt from "jsonwebtoken";
+import Message from "./models/Message.js";
 
 
 const app = express();
@@ -15,6 +16,8 @@ const app = express();
 const httpServer = createServer(app);
 
 const PORT = process.env.PORT || 5000;
+
+const onlineUsers = new Map();
 
 const io = new Server(httpServer, {
   cors: {
@@ -44,15 +47,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messages", messageRouter);
 
-// Socket connection
-io.on("connection", (socket) => {
-  console.log("Socket connected: ", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected: ", socket.id);
-  });
-});
-
+// Socket middleware
 io.use((socket, next) => {
   try {
 
@@ -75,6 +70,68 @@ io.use((socket, next) => {
   }
 });
 
+// Socket connection
+io.on("connection", (socket) => {
+  console.log("Socket connected: ", socket.id);
+
+  const userId = socket.userId;
+
+  onlineUsers.set(userId, socket.id);
+
+  console.log("Online user: ", userId);
+
+  // Send message
+  socket.on("send-message", async (data) => {
+    try {
+
+      const {receiver, content} = data;
+
+      if(!receiver || !content?.trim()) {
+        return;
+      }
+
+      const message = await Message.create({
+        sender: socket.userId,
+        receiver,
+        content: content.trim(),
+      });
+
+      const populatedMessage = await message.populate([
+        {
+          path: "sender",
+          select: "username profilePicture",
+        },
+        {
+          path: "receiver",
+          select: "username profilePicture",
+        }
+      ]);
+
+      // Send message to receiver
+      const receiverSocketId = onlineUsers.get(receiver);
+
+      if(receiverSocketId) {
+        io.to(receiverSocketId).emit(
+          "new-message",
+          populatedMessage
+        );
+      }
+
+      socket.emit("message-sent", populatedMessage);
+      
+    } catch (error) {
+      console.error("Send message error: ", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    onlineUsers.delete(userId);
+
+    console.log("Socket disconnected: ", socket.id);
+  });
+});
+
+// Start server
 const startServer = async () => {
   try {
 
