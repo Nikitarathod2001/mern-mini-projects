@@ -7,9 +7,9 @@ import User from "../models/User.js";
 export const registerUser = async (req, res) => {
   try {
 
-    const {username, email, password} = req.body;
+    const {username, firstName, lastName, email, password} = req.body;
 
-    if(!username || !email || !password) {
+    if(!username || !email || !password || !firstName || !lastName) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -38,6 +38,8 @@ export const registerUser = async (req, res) => {
 
     const user = await User.create({
       username,
+      firstName,
+      lastName,
       email,
       password: hashedPassword
     });

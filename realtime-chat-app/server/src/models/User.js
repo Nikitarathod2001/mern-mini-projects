@@ -12,6 +12,20 @@ const userSchema = new mongoose.Schema({
     match: /^[a-z0-9_-]+$/
   },
 
+  firstName: {
+    type: String,
+    required: true,
+    trim: true,
+    maxLength: 30,
+  },
+
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
+    maxLength: 30,
+  },
+
   email: {
     type: String,
     required: true,
