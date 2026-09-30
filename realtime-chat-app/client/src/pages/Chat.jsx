@@ -12,7 +12,10 @@ const Chat = () => {
 
   const {user, logout, token} = useAuth();
 
-  const {onlineUsers, messages, sendMessage, loadMessages} = useSocket();
+  const {
+    onlineUsers, messages, sendMessage, loadMessages,
+    typingUsers, startTyping, stopTyping
+  } = useSocket();
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -21,6 +24,12 @@ const Chat = () => {
   const [messageInput, setMessageInput] = useState("");
 
   const messagesEndRef = useRef(null);
+
+  const [userTyping, setUserTyping] = useState(false);
+
+  const typingTimeoutRef = useRef(null);
+
+  const isSelectedUserTyping = selectedUser && typingUsers.has(selectedUser._id);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,6 +61,12 @@ const Chat = () => {
       selectedUser._id,
       messageInput.trim()
     );
+
+    stopTyping(selectedUser._id);
+
+    if(typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
 
     setMessageInput("");
   };
@@ -105,6 +120,76 @@ const Chat = () => {
     scrollToBottom();
   }, [conversationMessages, selectedUser]);
 
+  // Handle Typing
+  const handleTyping = (e) => {
+    const value = e.target.value;
+
+    setMessageInput(value);
+
+    if(!selectedUser) {
+      return;
+    }
+
+    // If input is empty, immediately stop typing
+    if(!value.trim()) {
+      if(typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      stopTyping(selectedUser._id);
+      return;
+    }
+
+    // Tell receiver that user started typing
+    startTyping(selectedUser._id);
+
+    // Clear previous timeout
+    if(typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Wait before declaring "Stopped typing"
+    typingTimeoutRef.current = setTimeout(() => {
+      stopTyping(selectedUser._id);
+    }, 1000);
+  };
+
+  // Clean up typing timer
+  useEffect(() => {
+    return () => {
+      if(typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    }
+  }, []);
+
+  // Stop typing when changing users
+  useEffect(() => {
+    return () => {
+      if(selectedUser) {
+        stopTyping(selectedUser._id);
+      }
+
+      if(typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [selectedUser]);
+
+  // Handle selected user
+  const handleSelectedUser = (item) => {
+    if(selectedUser) {
+      stopTyping(selectedUser._id);
+    }
+
+    if(typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    setMessageInput("");
+    setSelectedUser(item);
+  };
+
   return (
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
 
@@ -152,7 +237,7 @@ const Chat = () => {
             {
               filteredUsers.map((item) => (
                 <div key={item._id}
-                  onClick={() => setSelectedUser(item)}
+                  onClick={() => handleSelectedUser(item)}
                   className={`px-4 py-2 rounded-2xl cursor-pointer transition ${
                     selectedUser?._id === item._id
                     ? "bg-teal-700 text-white"
@@ -201,9 +286,14 @@ const Chat = () => {
                     {selectedUser.username}
                   </h2>
 
-                  <p className={`text-sm ${onlineUsers.has(selectedUser._id) ? "text-green-500" : "text-gray-400"}`}>
+                  <p className={`text-sm 
+                    ${isSelectedUserTyping 
+                      ? "text-teal-500"
+                      : onlineUsers.has(selectedUser._id) ? "text-green-500" : "text-gray-400"
+                    }`}>
                     {
-                      onlineUsers.has(selectedUser._id) ? "Online" : "Offline"
+                      isSelectedUserTyping ? "typing..."
+                      : onlineUsers.has(selectedUser._id) ? "Online" : "Offline"
                     }
                   </p>
                 </div>
@@ -216,7 +306,7 @@ const Chat = () => {
                 <div className='flex flex-col gap-2'>
 
                   {
-                    messages.length === 0 ? (
+                    conversationMessages.length === 0 ? (
                       <div className='h-full flex items-center justify-center text-center text-gray-400'>
 
                         <p className='text-sm sm:text-base'>
@@ -245,6 +335,23 @@ const Chat = () => {
                     )
                   }
 
+                  {/* Typing Indicator */}
+                  {
+                    isSelectedUserTyping && (
+                      <div className='flex justify-start mt-3'>
+
+                        <div className='bg-white text-gray-500 px-4 py-2 rounded-4xl shadow-sm'>
+
+                          <span className='animate-pulse'>
+                            typing...
+                          </span>
+
+                        </div>
+
+                      </div>
+                    )
+                  }
+
                   {/* Scroll target */}
                   <div ref={messagesEndRef}/>
 
@@ -259,7 +366,7 @@ const Chat = () => {
 
                   <input type="text" 
                     value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
+                    onChange={handleTyping}
                     placeholder='Enter a message...'
                     className='flex-1 min-w-0 border border-gray-300 rounded-4xl px-3 sm:px-4 py-3 outline-none'
                   />

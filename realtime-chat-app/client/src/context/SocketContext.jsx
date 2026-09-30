@@ -12,6 +12,8 @@ export const SocketProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const [messages, setMessages] = useState([]);
 
+  const [typingUsers, setTypingUsers] = useState(new Set());
+
   useEffect(() => {
     if(!token) {
       return;
@@ -126,9 +128,54 @@ export const SocketProvider = ({children}) => {
     setMessages(messages);
   };
 
+  // User typing
+  useEffect(() => {
+    const handleUserTyping = ({userId}) => {
+      setTypingUsers((prev) => {
+        const updated = new Set(prev);
+        updated.add(userId);
+        console.log("TYPING USERS AFTER ADD: ", [...updated]);
+        return updated;
+      });
+    };
+
+    socket.on("user-typing", handleUserTyping);
+
+    return () => {
+      socket.off("user-typing", handleUserTyping);
+    };
+  }, []);
+
+  // User stop typing
+  useEffect(() => {
+    const handleUserStopTyping = ({userId}) => {
+      setTypingUsers((prev) => {
+        const updated = new Set(prev);
+        updated.delete(userId);
+        return updated;
+      });
+    };
+
+    socket.on("user-stop-typing", handleUserStopTyping);
+
+    return () => {
+      socket.off("user-stop-typing", handleUserStopTyping);
+    };
+  }, []);
+
+  // Typing function
+  const startTyping = (receiverId) => {
+    socket.emit("typing", receiverId);
+  };
+
+  // Stop typing function
+  const stopTyping = (receiverId) => {
+    socket.emit("stop-typing", receiverId);
+  };
+
   return (
     <SocketContext.Provider value={{
-      onlineUsers, messages, sendMessage, clearMessages, loadMessages
+      onlineUsers, messages, sendMessage, clearMessages, loadMessages, typingUsers, startTyping, stopTyping
     }}>
       {children}
     </SocketContext.Provider>

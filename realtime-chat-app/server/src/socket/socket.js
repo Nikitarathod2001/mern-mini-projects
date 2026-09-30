@@ -108,6 +108,36 @@ const setupSocket = (httpServer) => {
       }
     });
 
+    // Typing event
+    socket.on("typing", (receiverId) => {
+      const receiverSockets = onlineUsers.get(receiverId);
+
+      if(!receiverSockets) {
+        return;
+      }
+
+      receiverSockets.forEach((socketId) => {
+        io.to(socketId).emit("user-typing", {
+          userId: socket.userId,
+        });
+      });
+    });
+
+    // Stop-typing event
+    socket.on("stop-typing", (receiverId) => {
+      const receiverSockets = onlineUsers.get(receiverId);
+
+      if(!receiverSockets) {
+        return;
+      }
+
+      receiverSockets.forEach((socketId) => {
+        io.to(socketId).emit("user-stop-typing", {
+          userId: socket.userId,
+        });
+      });
+    });
+
     // Disconnect
     socket.on("disconnet", () => {
       const userSockets = onlineUsers.get(userId);
