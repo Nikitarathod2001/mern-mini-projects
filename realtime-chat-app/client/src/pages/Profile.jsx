@@ -19,9 +19,9 @@ const Profile = () => {
   const [profileUser, setProfileUser] = useState(user);
   const [profileLoading, setProfileLoading] = useState(false);
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [bio, setBio] = useState("");
+  const [firstName, setFirstName] = useState(profileUser?.firstName || "");
+  const [lastName, setLastName] = useState(profileUser?.lastName || "");
+  const [bio, setBio] = useState(profileUser?.bio || "");
 
   const [profilePicture, setProfilePicture] = useState("");
 
@@ -309,6 +309,7 @@ const Profile = () => {
             <input type="text" 
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              placeholder='Enter first name'
               className='w-full border rounded-lg px-3 py-2 outline-none'
               maxLength={30}
             />
@@ -325,6 +326,7 @@ const Profile = () => {
             <input type="text" 
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              placeholder='Enter last name'
               className='w-full border rounded-lg px-3 py-2 outline-none'
               maxLength={30}
             />
