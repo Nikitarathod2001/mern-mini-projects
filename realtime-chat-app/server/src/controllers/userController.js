@@ -108,6 +108,29 @@ export const updateProfile = async (req, res) => {
       message: "Failed to update profile"
     });
   }
+};
 
-  
+// Get user profile
+export const getUserProfile = async (req, res) => {
+  try {
+
+    const user = await User.findById(req.params.userId).select("username firstName lastName profilePicture bio");
+
+    if(!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      user,
+    });
+    
+  } catch (error) {
+    console.error("Get user profile error: ", error);
+
+    res.status(500).json({
+      message: "Failed to get user profile",
+    });
+  }
 };

@@ -8,10 +8,13 @@ import {faPaperPlane, faArrowLeft, faCheck, faCheckDouble} from "@fortawesome/fr
 import toast from 'react-hot-toast';
 import { useSocket } from '../context/SocketContext';
 import { formatMessageDate, formatMessageTime } from '../utils/dateUtils';
+import { useNavigate } from 'react-router-dom';
 
 const Chat = () => {
 
   const {user, logout, token} = useAuth();
+
+  const navigate = useNavigate();
 
   const {
     onlineUsers, messages, sendMessage, loadMessages,
@@ -300,9 +303,24 @@ const Chat = () => {
                 </button>
 
                 <div className='min-w-0'>
-                  <h2 className='text-lg sm:text-xl font-bold truncate'>
-                    {selectedUser.username}
-                  </h2>
+                  <div className='flex items-center gap-3'>
+
+                    <img src={
+                      selectedUser.profilePicture || "https://via.placeholder.com/40" 
+                    } alt="" 
+                      className='w-8 h-8 rounded-full object-cover'
+                    />
+
+                    <button onClick={() => navigate(`/profile/${selectedUser._id}`)}  
+                    >
+
+                      <h2 className='text-lg sm:text-xl font-bold truncate cursor-pointer'>
+                        @{selectedUser.username}
+                      </h2>
+
+                    </button>
+
+                  </div>
 
                   <p className={`text-sm 
                     ${isSelectedUserTyping 
