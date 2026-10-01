@@ -69,14 +69,16 @@ export const updateProfile = async (req, res) => {
       user.bio = bio.trim();
     }
 
-    const result = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: "realtime-chat-app"
-      }
-    );
-      
-    user.profilePicture = result.secure_url;
+    if(req.file) {
+      const result = await cloudinary.uploader.upload(
+        req.file.path,
+        {
+          folder: "realtime-chat-app"
+        }
+      );
+        
+      user.profilePicture = result.secure_url;
+    }
 
     await user.save();
 
