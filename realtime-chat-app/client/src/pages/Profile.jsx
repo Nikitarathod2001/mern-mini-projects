@@ -32,25 +32,27 @@ const Profile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
 
-    if(!file) {
-      return;
-    }
+    if (!file) return;
 
-    if(!file.type.startsWith("image/")) {
+    // Check file type
+    if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
 
-    if(file.size > 5 * 1024 * 1024) {
+    // Check file size
+    if (file.size > 5 * 1024 * 1024) {
       toast.error("Image size must be less than 5MB");
       return;
     }
 
+    // Store file for upload
     setSelectedFile(file);
 
+    // Create preview
     const previewUrl = URL.createObjectURL(file);
     setProfilePicture(previewUrl);
-  };
+};
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -113,7 +115,7 @@ const Profile = () => {
 
             <div className='relative'>
 
-              <img src={profilePicture || "https://via.placeholder.com/120"} alt="Profile" 
+              <img src={profilePicture} alt="" 
               className='w-28 h-28 rounded-full object-cover border-4 border-gray-100'
               />
 
@@ -128,7 +130,7 @@ const Profile = () => {
 
             <input type="file" 
               ref={fileInputRef}
-              accept='image/'
+              accept='image/*'
               onChange={handleImageChange}
               className='hidden'
             />

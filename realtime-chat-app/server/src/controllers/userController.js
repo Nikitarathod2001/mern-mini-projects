@@ -1,11 +1,11 @@
 import User from "../models/User.js";
-import uploadToCloudinary from "../utils/uploadToCloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 
 // Get logged-in user
 export const getCurrentUser = async (req, res) => {
   try {
 
-    const user = await User.findById(req.userId).select("username email firstName lastName profilePicture bio");
+    const user = await User.findById(req.userId).select("-password");
 
     if(!user) {
       return res.status(404).json({
@@ -30,7 +30,7 @@ export const getUsers = async (req, res) => {
 
     const users = await User.find({
       _id: {$ne: req.userId},
-    }).select("username firstName lastName profilePicture bio");
+    }).select("-password");
 
     res.status(200).json({
       users
@@ -65,15 +65,18 @@ export const updateProfile = async (req, res) => {
       user.lastName = lastName.trim();
     }
 
-    if(req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, "real-time-chat/profiles");
-
-      user.profilePicture = result.secure_url;
-    }
-
     if(bio !== undefined) {
       user.bio = bio.trim();
     }
+
+    const result = await cloudinary.uploader.upload(
+      req.file.path,
+      {
+        folder: "realtime-chat-app"
+      }
+    );
+      
+    user.profilePicture = result.secure_url;
 
     await user.save();
 
@@ -93,10 +96,16 @@ export const updateProfile = async (req, res) => {
     });
     
   } catch (error) {
-    console.error("Update profile error: ", error);
+    console.error("cloudinary upload failed: ", {
+      message: error.message,
+      http_code: error.http_code,
+      name: error.name,
+    });
 
     res.status(500).json({
       message: "Failed to update profile"
     });
   }
+
+  
 };
