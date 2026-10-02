@@ -8,6 +8,8 @@ const Register = () => {
 
   const [formData, setFormData] = useState({
     username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
@@ -61,6 +63,24 @@ const Register = () => {
           name="username"
           placeholder="Username"
           value={formData.username}
+          onChange={handleChange}
+          className="w-full border border-zinc-400 rounded-lg px-4 py-2 mb-4 outline-none"
+        />
+
+        <input
+          type="text"
+          name="firstName"
+          placeholder="First Name"
+          value={formData.firstName}
+          onChange={handleChange}
+          className="w-full border border-zinc-400 rounded-lg px-4 py-2 mb-4 outline-none"
+        />
+
+        <input
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          value={formData.lastName}
           onChange={handleChange}
           className="w-full border border-zinc-400 rounded-lg px-4 py-2 mb-4 outline-none"
         />

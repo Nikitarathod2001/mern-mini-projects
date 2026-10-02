@@ -147,7 +147,7 @@ const Profile = () => {
     return (
       <div className='min-h-screen bg-gray-100 flex justify-center'>
 
-        <div className='w-full max-w-xl min-h-screen bg-white'>
+        <div className='mt-8 w-full max-w-xl h-150 bg-white rounded-3xl shadow-2xl'>
 
           {/* Header */}
           <div className='flex items-center gap-4 px-5 py-4 border-b'>
@@ -209,7 +209,7 @@ const Profile = () => {
                 About
               </h3>
 
-              <div className='bg-gray-50 border rounded-xl p-4'>
+              <div className='bg-gray-50 border border-zinc-400 rounded-xl p-4'>
 
                 <p className='text-gray-600 text-sm leading-relaxed'>
                   {
@@ -238,7 +238,7 @@ const Profile = () => {
         <div className='flex items-center gap-4 px-5 py-4 border-b'>
 
           <button onClick={() => navigate("/chat")}
-            className='text-gray-700 hover:text-gray-900 cursor-pointer'  
+            className='text-gray-600 hover:text-gray-900 cursor-pointer'  
           >
             <FontAwesomeIcon icon={faArrowLeft}/>
           </button>
@@ -310,7 +310,7 @@ const Profile = () => {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder='Enter first name'
-              className='w-full border rounded-lg px-3 py-2 outline-none'
+              className='w-full border border-zinc-400 rounded-lg px-3 py-2 text-gray-700 outline-none'
               maxLength={30}
             />
 
@@ -327,7 +327,7 @@ const Profile = () => {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder='Enter last name'
-              className='w-full border rounded-lg px-3 py-2 outline-none'
+              className='w-full border border-zinc-400 text-gray-700 rounded-lg px-3 py-2 outline-none'
               maxLength={30}
             />
 
@@ -360,7 +360,7 @@ const Profile = () => {
               rows={4}
               maxLength={150}
               placeholder='Tell something about yourself...'
-              className='w-full border rounded-lg px-3 py-2 resize-none outline-none'
+              className='w-full border border-zinc-400 text-gray-700 rounded-lg px-3 py-2 resize-none outline-none'
             />
 
             <p className='text-xs text-gray-400 text-right mt-1'>
@@ -372,7 +372,7 @@ const Profile = () => {
           {/* Save */}
           <button type='submit'
             disabled={loading}
-            className='w-full bg-teal-800 text-white py-2.5 rounded-lg font-medium disabled:opacity-50'
+            className='w-full bg-teal-800 hover:bg-teal-900 text-white py-2.5 rounded-4xl font-medium disabled:opacity-50 cursor-pointer transition duration-300'
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>

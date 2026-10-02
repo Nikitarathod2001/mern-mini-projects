@@ -389,13 +389,22 @@ const Chat = () => {
                 </button>
 
                 <div className='min-w-0'>
-                  <div className='flex items-center gap-3'>
+                  <div onClick={() => navigate(`/profile/${selectedUser._id}`)} 
+                  className='flex items-center gap-2 cursor-pointer'>
 
-                    <img src={
-                      selectedUser.profilePicture || "https://via.placeholder.com/40" 
-                    } alt="" 
-                      className='w-8 h-8 rounded-full object-cover'
-                    />
+                    {
+                      selectedUser?.profilePicture ? (
+                        <img src={selectedUser.profilePicture} alt={selectedUser.username}
+                        className='w-10 h-10 rounded-full object-cover'
+                        />
+                      ) : (
+                        <div className='w-10 h-10 bg-gray-200 flex items-center justify-center rounded-full'>
+                          <FontAwesomeIcon icon={faUser}
+                            className='text-gray-500'
+                          />
+                        </div>
+                      )
+                    }
 
                     <button onClick={() => navigate(`/profile/${selectedUser._id}`)}  
                     >
@@ -564,9 +573,9 @@ const Chat = () => {
                   />
 
                   <button onClick={handleSendMessage} 
-                    className='bg-teal-600 hover:bg-teal-700 text-white px-4 sm:px-6 py-3 rounded-full transition shrink-0'>
+                    className='bg-teal-600 hover:bg-teal-700 text-white px-4 sm:px-6 py-3 rounded-full transition shrink-0 cursor-pointer'>
                     
-                    <span className='hidden sm:inline cursor-pointer'>
+                    <span className='hidden sm:inline'>
                       Send
                     </span>
 
