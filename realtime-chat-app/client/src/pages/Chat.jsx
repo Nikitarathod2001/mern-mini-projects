@@ -3,18 +3,17 @@ import {useAuth} from "../context/AuthContext";
 import api from "../services/api";
 import { useState } from 'react';
 import { useEffect, useRef } from 'react';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPaperPlane, faArrowLeft, faCheck, faCheckDouble, faUser, faRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import toast from 'react-hot-toast';
 import { useSocket } from '../context/SocketContext';
-import { formatMessageDate, formatMessageTime } from '../utils/dateUtils';
-import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import ChatHeader from '../components/ChatHeader';
+import MessageList from '../components/MessageList';
+import MessageInput from '../components/MessageInput';
+import EmptyChat from '../components/EmptyChat';
 
 const Chat = () => {
 
   const {user, logout} = useAuth();
-
-  const navigate = useNavigate();
 
   const {
     onlineUsers, messages, sendMessage, loadMessages,
@@ -218,159 +217,15 @@ const Chat = () => {
     <div className='h-screen bg-gray-100 flex overflow-hidden'>
 
       {/* Sidebar */}
-      <aside className={`w-full md:w-80 lg:w-96 bg-white border-r border-gray-200 flex flex-col ${selectedUser ? "hidden md:flex" : "flex"}`}>
-
-        {/* Logged-in User */}
-        <div className='p-4 border-b border-gray-200 flex justify-between items-center gap-3'>
-
-          {/* Profile */}
-          <button onClick={() => navigate("/profile")}
-            className='flex items-center gap-3 min-w-0 cursor-pointer hover:bg-gray-50 rounded-xl p-2 -ml-2 transition'  
-          >
-
-            {/* Profile Picture */}
-            <div className='w-11 h-11 rounded-full overflow-hidden shrink-0 border border-gray-200'>
-
-              {
-                user?.profilePicture ? (
-                  <img src={user.profilePicture} alt={user.username}
-                  className='w-full h-full object-cover'
-                  />
-                ) : (
-                  <div className='w-full h-full bg-gray-200 flex items-center justify-center'>
-                    <FontAwesomeIcon icon={faUser}
-                      className='text-gray-500'
-                    />
-                  </div>
-                )
-              }
-
-            </div>
-
-            {/* Username */}
-            <div className='min-w-0 text-left'>
-
-              <h1 className='text-base font-semibold truncate'>
-                @{user?.username}
-              </h1>
-
-              <p className='text-xs text-green-500'>
-                Online
-              </p>
-
-            </div>
-
-          </button>
-
-          {/* Logout */}
-          <button onClick={logout} 
-            title='Logout'
-            className='shrink-0 w-9 h-9 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition cursor-pointer'
-          >
-            <FontAwesomeIcon icon={faRightFromBracket}/>
-          </button>
-
-        </div>
-
-        {/* User Search */}
-        <div className='p-4 mb-3'>
-
-          <input type="text" 
-            placeholder='Search users...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className='w-full border border-gray-300 rounded-full px-4 py-2 outline-none text-sm'
-          />
-
-        </div>
-
-        {/* User List */}
-        <div className='flex-1 overflow-y-auto px-4 pb-4'>
-
-          <div className='space-y-2'>
-
-            {
-              filteredUsers.map((item) => (
-                <div key={item._id}
-                  onClick={() => handleSelectedUser(item)}
-                  className={`px-4 py-2 rounded-2xl cursor-pointer transition ${
-                    selectedUser?._id === item._id
-                    ? "bg-teal-700 text-white"
-                    : "hover:bg-gray-100"
-                  }`}
-                >
-
-                  <div className='flex items-center gap-3'>
-
-                    {/* Profile Picture + Status */}
-                    <div className='relative shrink-0'>
-
-                      <div className='w-10 h-10 rounded-full overflow-hidden'>
-
-                        {
-                          item.profilePicture ? (
-                            <img src={item.profilePicture} alt={item.username} 
-                            className='w-full h-full object-cover'
-                            />
-                          ) : (
-                            <div className={`w-full h-full flex items-center justify-center ${
-                              selectedUser?._id === item._id
-                              ? "bg-teal-600"
-                              : "bg-gray-200"
-                            }`}>
-
-                              <FontAwesomeIcon icon={faUser}
-                              className={selectedUser?._id === item._id ? "text-white" : "text-gray-500"}
-                              />
-
-                            </div>
-                          )
-                        }
-
-                      </div>
-
-                      {/* Online Status */}
-                      <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                        onlineUsers.has(item._id) 
-                        ? "bg-green-500" : "bg-gray-400"
-                      }`}/>
-
-                    </div>
-
-                    {/* User Information */}
-                    <div className='min-w-0'>
-
-                      <h3 className='text-sm truncate'>
-                        @{item.username}
-                      </h3>
-
-                      {
-                        (item.firstName || item.lastName) && (
-                          <p className={`text-xs truncate ${
-                            selectedUser?._id === item._id ? "text-teal-100" : "text-gray-400"
-                          }`}>
-
-                            {
-                              `${item.firstName || ""} ${item.lastName || ""}`.trim()
-                            }
-
-                          </p>
-                        )
-                      }
-
-                    </div>
-
-                  </div>
-
-                </div>
-              ))
-            }
-
-          </div>
-
-        </div>
-
-      </aside>
+      <Sidebar user={user}
+        logout={logout}
+        search={search}
+        setSearch={setSearch}
+        filteredUsers={filteredUsers}
+        selectedUser={selectedUser}
+        handleSelectedUser={handleSelectedUser}
+        onlineUsers={onlineUsers}
+      />
 
       {/* Main Chat Area */}
       <main className={`flex-1 flex flex-col min-w-0 ${selectedUser ? "flex" : "hidden md:flex"}`}>
@@ -379,233 +234,29 @@ const Chat = () => {
           selectedUser ? (
             <>
               {/* Chat Header */}
-              <header className='bg-white border-b border-gray-200 p-4 flex items-center gap-3'>
-
-                {/* Mobile Back Button */}
-                <button onClick={() => setSelectedUser(null)}
-                  className='text-sm md:hidden bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer'  
-                >
-                  <FontAwesomeIcon icon={faArrowLeft}/>
-                </button>
-
-                <div className='min-w-0'>
-                  <div onClick={() => navigate(`/profile/${selectedUser._id}`)} 
-                  className='flex items-center gap-2 cursor-pointer'>
-
-                    {
-                      selectedUser?.profilePicture ? (
-                        <img src={selectedUser.profilePicture} alt={selectedUser.username}
-                        className='w-10 h-10 rounded-full object-cover'
-                        />
-                      ) : (
-                        <div className='w-10 h-10 bg-gray-200 flex items-center justify-center rounded-full'>
-                          <FontAwesomeIcon icon={faUser}
-                            className='text-gray-500'
-                          />
-                        </div>
-                      )
-                    }
-
-                    <button onClick={() => navigate(`/profile/${selectedUser._id}`)}  
-                    >
-
-                      <h2 className='text-lg sm:text-xl font-bold truncate cursor-pointer'>
-                        @{selectedUser.username}
-                      </h2>
-
-                    </button>
-
-                  </div>
-
-                  <p className={`text-sm 
-                    ${isSelectedUserTyping 
-                      ? "text-teal-500"
-                      : onlineUsers.has(selectedUser._id) ? "text-green-500" : "text-gray-400"
-                    }`}>
-                    {
-                      isSelectedUserTyping ? "typing..."
-                      : onlineUsers.has(selectedUser._id) ? "Online" : "Offline"
-                    }
-                  </p>
-                </div>
-
-              </header>
+              <ChatHeader selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+                isSelectedUserTyping={isSelectedUserTyping}
+                onlineUsers={onlineUsers}
+              />
 
               {/* Messages Area */}
-              <div className='flex-1 overflow-y-auto p-4 sm:p-6'>
-
-                <div className='flex flex-col gap-2'>
-
-                  {
-                    conversationMessages.length === 0 ? (
-                      <div className='h-full flex items-center justify-center text-center text-gray-400'>
-
-                        <p className='text-sm sm:text-base'>
-                          Start Chatting with {selectedUser.username}
-                        </p>
-
-                      </div>
-                    ) : (
-                      conversationMessages.map((message, index) => {
-
-                        const currentDate = formatMessageDate(message.createdAt);
-
-                        const previousDate = index > 0 ?
-                         formatMessageDate(conversationMessages[index - 1].createdAt)
-                         : null;
-
-                        const showDateSeparator = currentDate !== previousDate;
-
-                        const isMine = String(message.sender._id) === String(user.id);
-
-                        return (
-                          <div key={message._id}>
-
-                            {/* Date Separator */}
-                            {
-                              showDateSeparator && (
-                                <div className='flex justify-center my-4'>
-
-                                  <span className='bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full'>
-                                    {currentDate}
-                                  </span>
-
-                                </div>
-                              )
-                            }
-
-                            {/* Message */}
-                            <div className={`flex ${
-                              isMine ? "justify-end" : "justify-start"
-                            }`}>
-
-                              <div className={`max-w-[70%] rounded-4xl px-4 py-2 ${isMine ? "bg-teal-800 text-white" : "bg-white text-gray-900"}`}>
-                                
-                                <div className='flex items-end gap-1'>
-
-                                  <span>
-                                    {message.content}
-                                  </span>
-
-                                  <span className={`text-[10px] sm:text-[9px] whitespace-nowrap ${
-                                    isMine ? "text-gray-300" : "text-gray-600"
-                                  }`}>
-                                    {formatMessageTime(message.createdAt)}
-                                  </span>
-
-                                  {
-                                    isMine && (
-                                      <>
-                                        {
-                                          message.status === "sent" && (
-                                            <FontAwesomeIcon icon={faCheck}
-                                              className='text-[11px] text-gray-300 ml-1'
-                                            />
-                                          )
-                                        }
-
-                                        {
-                                          message.status === "delivered" && (
-                                            <FontAwesomeIcon icon={faCheckDouble}
-                                              className='text-[11px] text-gray-300 ml-1'
-                                            />
-                                          )
-                                        }
-
-                                        {
-                                          message.status === "read" && (
-                                            <FontAwesomeIcon icon={faCheckDouble}
-                                              className='text-[11px] text-blue-300 ml-1'
-                                            />
-                                          )
-                                        }
-                                      </>
-                                    )
-                                  }
-
-                                </div>
-
-                              </div>
-
-                            </div>
-
-                          </div>
-                        );
-
-                      })
-                    )
-                  }
-
-                  {/* Typing Indicator */}
-                  {
-                    isSelectedUserTyping && (
-                      <div className='flex justify-start mt-3'>
-
-                        <div className='bg-white text-gray-500 px-4 py-2 rounded-4xl shadow-sm'>
-
-                          <span className='animate-pulse'>
-                            typing...
-                          </span>
-
-                        </div>
-
-                      </div>
-                    )
-                  }
-
-                  {/* Scroll target */}
-                  <div ref={messagesEndRef}/>
-
-                </div>
-
-              </div>
+              <MessageList conversationMessages={conversationMessages}
+                selectedUser={selectedUser}
+                user={user}
+                isSelectedTyping={isSelectedUserTyping}
+                messagesEndRef={messagesEndRef}
+              />
 
               {/* Message Input */}
-              <div className='bg-white border-t border-gray-200 p-3 sm:p-4'>
-
-                <div className='flex gap-2 sm:gap-3'>
-
-                  <input type="text" 
-                    value={messageInput}
-                    onChange={handleTyping}
-                    placeholder='Enter a message...'
-                    className='flex-1 min-w-0 border border-gray-300 rounded-4xl px-3 sm:px-4 py-3 outline-none'
-                  />
-
-                  <button onClick={handleSendMessage} 
-                    className='bg-teal-600 hover:bg-teal-700 text-white px-4 sm:px-6 py-3 rounded-full transition shrink-0 cursor-pointer'>
-                    
-                    <span className='hidden sm:inline'>
-                      Send
-                    </span>
-
-                    <span className='sm:hidden cursor-pointer'>
-                      <FontAwesomeIcon icon={faPaperPlane}/>
-                    </span>
-
-                  </button>
-
-                </div>
-
-              </div>
+              <MessageInput messageInput={messageInput}
+                handleTyping={handleTyping}
+                handleSendMessage={handleSendMessage}
+              />
             </>
           ) : (
             // Empty Chat State
-            <div className='flex-1 flex items-center justify-center p-6 text-center'>
-
-              <div>
-
-                <h2 className='text-xl sm:text-2xl font-bold text-gray-700'>
-                  Welcome to Chat
-                </h2>
-
-                <p className='text-gray-500 mt-2 text-sm sm:text-base'>
-                  Select a user from the sidebar to start chatting.
-                </p>
-
-              </div>
-
-            </div>
+            <EmptyChat/>
           )
         }
 
