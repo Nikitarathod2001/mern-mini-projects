@@ -119,7 +119,7 @@ const Dashboard = () => {
 
             <button type='button'
               onClick={() => setShowNoteForm(true)} 
-              className='rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-orange-600 active:scale-95 cursor-pointer'>
+              className='hidden sm:block rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-orange-600 active:scale-95 cursor-pointer'>
               + New Note
             </button>
 
