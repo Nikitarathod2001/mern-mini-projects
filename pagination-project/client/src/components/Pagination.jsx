@@ -8,7 +8,7 @@ const Pagination = ({
 
       <button onClick={() => onPageChange(currentPage - 1)}
         disabled={!hasPrevPage}
-        className='rounded bg-gray-800 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50'  
+        className='rounded bg-gray-800 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'  
       >
         Previous
       </button>
@@ -19,7 +19,7 @@ const Pagination = ({
 
           return (
             <button key={pageNumber} onClick={() => onPageChange(pageNumber)}
-              className={`rounded px-4 py-2 ${currentPage === pageNumber ? "bg-blue-600" : "bg-white text-gray-800"}`}
+              className={`rounded px-4 py-2 cursor-pointer ${currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-white text-gray-800"}`}
             >
               {pageNumber}
             </button>
@@ -29,7 +29,7 @@ const Pagination = ({
 
       <button onClick={() => onPageChange(currentPage + 1)}
         disabled={!hasNextPage}
-        className='rounded bg-gray-800 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50'  
+        className='rounded bg-gray-800 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer'  
       >
         Next
       </button>
